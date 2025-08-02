@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>HTML Markdown</title>
+  </head>
+  <body>
+    <h1 id="Main_heading">HTML Markdown displayer</h1>
+    <textarea
+      id="inputarea"
+      onchange="converttexttomarkdown(this.value)"
+      placeholder="Enter Markdown"
+    ></textarea>
+
+    <div id="displaybox"></div>
+
+    <script>
+      let text;
+      let combinedtext = "";
+      let ish6 = false;
+      let ish5 = false;
+      let ish4 = false;
+      let ish3 = false;
+      let ish2 = false;
+      let ish1 = false;
+      let isbold = false;
+      let isitalic = false;
+      let iscode = false;
+      let islist = false;
+      let isstrike = false;
+      let ismark = false;
+      let islink = false;
+      let isimglink = false;
+      let tablestate = 0;
+      function converttexttomarkdown(text) {
+        combinedtext = "";
+        ish6 = false;
+        ish5 = false;
+        ish4 = false;
+        ish3 = false;
+        ish2 = false;
+        ish1 = false;
+        isbold = false;
+        isitalic = false;
+        iscode = false;
+        islist = false;
+        isstrike = false;
+        ismark = false;
+        islink = false;
+        isimglink = false;
+        tablestate = 0;
+        text = String(text);
+        text = text
+          .replaceAll(/  /g, " &nbsp ")
+          .replaceAll(/<br>/gim, " <br> ")
+          .replaceAll(/\n/gim, " <br> ");
+        text = text.split(" ");
+        console.log(text);
+        for (let i = 0; i < text.length; i++) {
+          if (text[i].match(/\`\`\`/gi)) {
+            if (text[i].match(/\`\`\`(.*?)\`\`\`/gi)) {
+              combinedtext +=
+                String(text[i])
+                  .replace(/\`\`\`(.*?)\`\`\`/gi, "<pre><code>$1</code></pre>")
+                  .replace('"', "&quot;") + " ";
+            } else if (!iscode) {
+              combinedtext +=
+                String(text[i])
+                  .replace(/\`\`\`(.*?)/g, "<pre><code>$1")
+                  .replace('"', "&quot;") + " ";
+              iscode = true;
+            } else if (text[i].match(/(.*?)\`\`\`/gi)) {
+              combinedtext +=
+                String(text[i])
+                  .replace(/(.*?)\`\`\`/g, "$1</pre></code>")
+                  .replace('"', "&quot;") + " ";
+              iscode = false;
+            } else {
+              combinedtext +=
+                String(text[i])
+                  .replace(/\```/g, "</pre></code>")
+                  .replace('"', "&quot;") + " ";
+              iscode = false;
+            }
+          } else if (text[i].match(/\`/gi)) {
+            if (text[i].match(/\`(.*?)\`/gi)) {
+              combinedtext +=
+                String(text[i])
+                  .replace(/\`(.*?)\`/gi, "<pre><code>$1</code></pre>")
+                  .replace('"', "&quot;") + " ";
+            } else if (!iscode) {
+              combinedtext +=
+                String(text[i])
+                  .replace(/\`(.*?)/g, "<pre><code>$1")
+                  .replace('"', "&quot;") + " ";
+              iscode = true;
+            } else if (text[i].match(/(.*?)\`/gi)) {
+              combinedtext +=
+                String(text[i])
+                  .replace(/(.*?)\`/g, "$1</pre></code>")
+                  .replace('"', "&quot;") + " ";
+              iscode = false;
+            } else {
+              combinedtext +=
+                String(text[i])
+                  .replace(/\`/g, "</pre></code>")
+                  .replace('"', "&quot;") + " ";
+              iscode = false;
+            }
+          } else if (iscode) {
+            if (!text[i].match(/\<br\>/g)) {
+              combinedtext +=
+                text[i].replaceAll(/</g, "&lt;").replaceAll(/>/g, "&gt;") + " ";
+            } else {
+              combinedtext += "<br>";
+            }
+          } else if (text[i].match(/\!\[(.*?)/g) && !isimglink) {
+            // (text[i].match(/(.*?)\]/g) &&
+            let link;
+            if (text[i].match(/\((.*?)\)/g)) {
+              link = text[i].match(/\((.*?)\)/g);
+            } else if (text[i + 1]) {
+              if (text[i + 1].match(/\((.*?)\)/g)) {
+                link = text[i + 1].match(/\((.*?)\)/g);
+              }
+            }
+            if (link) {
+              link = String(link).replace(/\(/g, "").replace(/\)/g, "");
+              if (text[i].match(/\!\[(.*?)\]/gi)) {
+                combinedtext +=
+                  String(text[i].replace(/\((.*?)\)/g, "")).replace(
+                    /\[(.*?)\]/gi,
+                    '<img src="' + link + '" alt="$1">'
+                  ) + " ";
+              } else if (!islink) {
+                combinedtext +=
+                  String(text[i]).replace(
+                    /\[(.*?)/g,
+                    '<img src="' + link + '" alt="$1">'
+                  ) + " ";
+                islink = true;
+              } else if (text[i].match(/(.*?)\]/gi)) {
+                combinedtext += String(text[i]).replace(/(.*?)\]/g, "$1") + " ";
+                islink = false;
+              } else {
+                combinedtext += String(text[i]).replace(/\*/g, "</a>") + " ";
+                islink = false;
+              }
+              text[i] = "";
+              if (text[i + 1]) {
+                text[i + 1] = "";
+              }
+            } else {
+              combinedtext += text[i];
+            }
+          } else if (text[i].match(/\[(.*?)/g) || text[i].match(/(.*?)\]/g)) {
+            let link;
+            if (text[i].match(/\((.*?)\)/g)) {
+              link = text[i].match(/\((.*?)\)/g);
+            } else if (text[i + 1]) {
+              if (text[i + 1].match(/\((.*?)\)(.*?)/g)) {
+                link = text[i + 1].match(/\((.*?)\)/g);
+              }
+            } else if (text[i + 2].match(/\((.*?)\)(.*?)/g)) {
+              if (text[i + 2].match(/\((.*?)\)/g)) {
+                link = text[i + 2].match(/\((.*?)\)/g);
+              }
+            } else if (text[i + 3].match(/\((.*?)\)(.*?)/g)) {
+              if (text[i + 3].match(/\((.*?)\)/g)) {
+                link = text[i + 3].match(/\((.*?)\)/g);
+              }
+            } else if (text[i + 4].match(/\((.*?)\)(.*?)/g)) {
+              if (text[i + 4].match(/\((.*?)\)/g)) {
+                link = text[i + 4].match(/\((.*?)\)/g);
+              }
+            }
+            if (link) {
+              link = String(link).replace(/\(/g, "").replace(/\)/g, "");
+              if (text[i].match(/\[(.*?)\]/gi)) {
+                combinedtext +=
+                  String(text[i].replace(/\((.*?)\)/g, "")).replace(
+                    /\[(.*?)\]/gi,
+                    '<a href="' + link + '">$1</a>'
+                  ) + " ";
+              } else if (!islink) {
+                combinedtext +=
+                  String(text[i]).replace(
+                    /\[(.*?)/g,
+                    '<a href="' + link + '">$1'
+                  ) + " ";
+                islink = true;
+              } else if (text[i].match(/(.*?)\]/gi)) {
+                combinedtext +=
+                  String(text[i]).replace(/(.*?)\]/g, "$1</a>") + " ";
+                islink = false;
+              } else {
+                combinedtext += String(text[i]).replace(/\*/g, "</a>") + " ";
+                islink = false;
+              }
+              text[i] = "";
+              if (text[i + 1]) {
+                if (
+                  text[i + 1].match(/(.*?)\]/g) &&
+                  !text[i + 1].match(/\[(.*?)/g)
+                ) {
+                  text[i + 1] = text[i + 1]
+                    .replace(/(.*?)\]/g, "$1")
+                    .replace(/\((.*?)\)/g, "");
+                }
+              }
+              if (text[i + 2]) {
+                if (
+                  text[i + 2].match(/(.*?)\]/g) &&
+                  !text[i + 2].match(/\[(.*?)/g)
+                ) {
+                  text[i + 2] = text[i + 2]
+                    .replace(/(.*?)\]/g, "$1")
+                    .replace(/\((.*?)\)/g, "");
+                }
+              }
+              if (text[i + 3]) {
+                if (
+                  text[i + 3].match(/(.*?)\]/g) &&
+                  !text[i + 3].match(/\[(.*?)/g)
+                ) {
+                  text[i + 3] = text[i + 3]
+                    .replace(/(.*?)\]/g, "$1")
+                    .replace(/\((.*?)\)/g, "");
+                }
+              }
+              if (text[i + 4]) {
+                if (
+                  text[i + 4].match(/(.*?)\]/g) &&
+                  !text[i + 4].match(/\[(.*?)/g)
+                ) {
+                  text[i + 4] = text[i + 4]
+                    .replace(/(.*?)\]/g, "$1")
+                    .replace(/\((.*?)\)/g, "");
+                }
+              }
+              if (text[i + 5]) {
+                if (
+                  text[i + 5].match(/(.*?)\]/g) &&
+                  !text[i + 5].match(/\[(.*?)/g)
+                ) {
+                  text[i + 5] = text[i + 5]
+                    .replace(/(.*?)\]/g, "$1")
+                    .replace(/\((.*?)\)/g, "");
+                }
+              }
+            } else {
+              combinedtext += text[i];
+            }
+          } else if (String(text[i]).match(/(.*?)\|(.*?)/g)) {
+            // alert(text[i]);
+            if (tablestate == 0) {
+              if (
+                text.join(" ").match(/(.*?)\-\-\-(.*?)/g) ||
+                text.join(" ").match(/(.*?)\|\-\-\-\|(.*?)/g)
+              ) {
+                combinedtext += "<table><thead><tr><th>";
+                tablestate = 1;
+              }
+            } else if (tablestate == 1) {
+              if (text[i + 1] == "<br>") {
+                combinedtext += "</th></tr></thead><tbody>";
+                tablestate = 2;
+              } else {
+                combinedtext += "</th><th>";
+              }
+            } else if (
+              tablestate == 2 &&
+              !(
+                (text[i + 1] && text[i + 1].match(/(.*?)\-\-\-(.*?)/g)) ||
+                text[i].match(/(.*?)\|\-\-\-\|(.*?)/g)
+              )
+            ) {
+              if (text[i + 1] == "<br>" || !text[i + 1]) {
+                combinedtext += "</td></tr>";
+              } else {
+                combinedtext += "</td><th>";
+              }
+            }
+            if (
+              text[i].match(/(.*?)\-\-\-(.*?)/g) ||
+              text[i].match(/(.*?)\|\-\-\-\|(.*?)/g)
+            ) {
+              text[i] = "";
+            }
+            if (text[i + 1]) {
+              if (
+                text[i + 1].match(/(.*?)\-\-\-(.*?)/g) ||
+                text[i + 1].match(/(.*?)\|\-\-\-\|(.*?)/g)
+              ) {
+                text[i + 1] = "";
+              }
+            }
+            // if (text[i] == "\|\-\-\-\|\-\-\-\|\-\-\-\|\-\-\-\|\-\-\-\|") {
+            //   text[i] = "";
+            // }
+          } else if (text[i] == "######") {
+            if (!ish6) {
+              combinedtext += "<h6>";
+              ish6 = true;
+            } else {
+              combinedtext += "</h6>";
+              ish6 = false;
+            }
+          } else if (text[i] == "#####") {
+            if (!ish5) {
+              combinedtext += "<h5>";
+              ish5 = true;
+            } else {
+              combinedtext += "</h5>";
+              ish5 = false;
+            }
+          } else if (text[i] == "####") {
+            if (!ish4) {
+              combinedtext += "<h4>";
+              ish4 = true;
+            } else {
+              combinedtext += "</h4>";
+              ish4 = false;
+            }
+          } else if (text[i] == "###") {
+            if (!ish3) {
+              combinedtext += "<h3>";
+              ish3 = true;
+            } else {
+              combinedtext += "</h3>";
+              ish3 = false;
+            }
+          } else if (text[i] == "##") {
+            if (!ish2) {
+              combinedtext += "<h2>";
+              ish2 = true;
+            } else {
+              combinedtext += "</h2>";
+              ish2 = false;
+            }
+          } else if (text[i] == "#") {
+            if (!ish1) {
+              combinedtext += "<h1>";
+              ish1 = true;
+            } else {
+              combinedtext += "</h1>";
+              ish1 = false;
+            }
+          } else if (
+            text[i].match(/\-\-\-/g) &&
+            (text[i - 1] == "<br>" || text[i - 1] == "\n")
+          ) {
+            combinedtext += '<div class="bar"></div>';
+          } else if (text[i].match(/\*\*/g)) {
+            if (text[i].match(/\*\*(.*?)\*\*/gi)) {
+              combinedtext +=
+                String(text[i]).replace(/\*\*(.*?)\*\*/gi, "<b>$1</b>") + " ";
+            } else if (!isbold) {
+              combinedtext +=
+                String(text[i]).replace(/\*\*(.*?)/g, "<b>$1") + " ";
+              isbold = true;
+            } else if (text[i].match(/(.*?)\*\*/gi)) {
+              combinedtext +=
+                String(text[i]).replace(/(.*?)\*\*/g, "$1</b>") + " ";
+              isbold = false;
+            } else {
+              combinedtext += String(text[i]).replace(/\*\*/g, "</b>") + " ";
+              isbold = false;
+            }
+          } else if (text[i].match(/\=\=/g)) {
+            if (text[i].match(/\=\=(.*?)\=\=/gi)) {
+              combinedtext +=
+                String(text[i]).replace(/\=\=(.*?)\=\=/gi, "<mark>$1</mark>") +
+                " ";
+            } else if (!ismark) {
+              combinedtext +=
+                String(text[i]).replace(/\=\=(.*?)/g, "<mark>$1") + " ";
+              ismark = true;
+            } else if (text[i].match(/(.*?)\=\=/gi)) {
+              combinedtext +=
+                String(text[i]).replace(/(.*?)\=\=/g, "$1</mark>") + " ";
+              ismark = false;
+            } else {
+              combinedtext += String(text[i]).replace(/\=\=/g, "</mark>") + " ";
+              ismark = false;
+            }
+          } else if (
+            (text[i].match(/\-/gim) || text[i].match(/\*/gim)) &&
+            (text[i - 1] == "<br>" || text[i - 1] == "\n")
+          ) {
+            if (!islist) {
+              if (text[i].match(/\-/gim)) {
+                combinedtext += String(text[i]).replace(/\-/gi, "<ul><li>");
+              }
+              if (text[i].match(/\*/gim)) {
+                combinedtext += String(text[i]).replace(/\*/gi, "<ul><li>");
+              }
+              islist = true;
+            } else {
+              combinedtext += "<li>";
+              // islist = false;
+            }
+          } else if (text[i].match(/\*/g)) {
+            if (text[i].match(/\*(.*?)\*/gi)) {
+              combinedtext +=
+                String(text[i]).replace(/\*(.*?)\*/gi, "<i>$1</i>") + " ";
+            } else if (!isitalic) {
+              combinedtext +=
+                String(text[i]).replace(/\*(.*?)/g, "<i>$1") + " ";
+              isitalic = true;
+            } else if (text[i].match(/(.*?)\*/gi)) {
+              combinedtext +=
+                String(text[i]).replace(/(.*?)\*/g, "$1</i>") + " ";
+              isitalic = false;
+            } else {
+              combinedtext += String(text[i]).replace(/\*/g, "</i>") + " ";
+              isitalic = false;
+            }
+          } else if (text[i].match(/\_/g)) {
+            if (text[i].match(/\_(.*?)\_/gi)) {
+              combinedtext +=
+                String(text[i]).replace(/\_(.*?)\_/gi, "<i>$1</i>") + " ";
+            } else if (!isitalic) {
+              combinedtext +=
+                String(text[i]).replace(/\_(.*?)/g, "<i>$1") + " ";
+              isitalic = true;
+            } else if (text[i].match(/(.*?)\_/gi)) {
+              combinedtext +=
+                String(text[i]).replace(/(.*?)\_/g, "$1</i>") + " ";
+              isitalic = false;
+            } else {
+              combinedtext += String(text[i]).replace(/\_/g, "</i>") + " ";
+              isitalic = false;
+            }
+          } else if (text[i].match(/\~\~/gim)) {
+            if (text[i].match(/\~\~(.*?)\~\~/gi)) {
+              combinedtext +=
+                String(text[i]).replace(/\~\~(.*?)\~\~/gim, "<s>$1</s>") + " ";
+            } else if (!isstrike) {
+              combinedtext +=
+                String(text[i]).replace(/\~\~(.*?)/gim, "<s>$1") + " ";
+              isstrike = true;
+            } else if (text[i].match(/(.*?)\~\~/gim)) {
+              combinedtext +=
+                String(text[i]).replace(/(.*?)\~\~/gim, "$1</s>") + " ";
+              isstrike = false;
+            } else {
+              combinedtext += String(text[i]).replace(/\~\~/gim, "</s>") + " ";
+              isstrike = false;
+            }
+          } else if (
+            text[i] == "<br>" ||
+            text[i] == "\n" ||
+            text[i].match(/\n/gim)
+          ) {
+            if (ish1) {
+              combinedtext += "</h1>";
+              ish1 = false;
+            }
+            if (ish2) {
+              combinedtext += "</h2>";
+              ish2 = false;
+            }
+            if (ish3) {
+              combinedtext += "</h3>";
+              ish3 = false;
+            }
+            if (ish4) {
+              combinedtext += "</h4>";
+              ish4 = false;
+            }
+            if (ish5) {
+              combinedtext += "</h5>";
+              ish5 = false;
+            }
+            if (ish6) {
+              combinedtext += "</h6>";
+              ish6 = false;
+            }
+            if (isbold) {
+              combinedtext +=
+                /*String(text[i]).replace(/\*\*\/g, "</b>") + */ "</b> ";
+              isbold = false;
+            }
+            if (ismark) {
+              combinedtext +=
+                /*String(text[i]).replace(/\*\*\/g, "</b>") + */ "</mark> ";
+              ismark = false;
+            }
+            if (isitalic) {
+              combinedtext +=
+                /*String(text[i]).replace(/\*\/g, "</i>") +*/ "</i> ";
+              isitalic = false;
+            }
+            if (isstrike) {
+              combinedtext +=
+                /*String(text[i]).replace(/\~\~\/g, "</s>") +*/ "</s> ";
+              isstrike = false;
+            }
+            if (ismark) {
+              combinedtext += "</mark>";
+              ismark = false;
+            }
+            if (islink) {
+              combinedtext += "</a>";
+              islink = false;
+            }
+            if (isimglink) {
+              // combinedtext += "</a>"
+              islink = false;
+            }
+            // if (iscode) {
+            //   combinedtext +=
+            //     String(text[i])
+            //       .replace(/\`/g, "</pre></code>")
+            //       .replace('"', "&quot;") + " ";
+            //   iscode = false;
+            // }
+            if (
+              islist &&
+              !(
+                text[i + 1] == "-" ||
+                text[i + 2] == "-" ||
+                text[i + 1] == "*" ||
+                text[i + 2] == "*"
+              )
+            ) {
+              combinedtext += "</ul></li>";
+              islist = false;
+            }
+            if (tablestate == 2 && !text[i + 1].includes("|")) {
+              combinedtext += "</td></tr></tbody></table>";
+              tablestate = 0;
+            }
+            if (!(ish1 || ish2 || ish3 || tablestate != 0)) {
+              combinedtext += "<br>";
+            }
+          } else {
+            combinedtext += text[i] + " ";
+          }
+        }
+        document.getElementById("displaybox").innerHTML = combinedtext;
+      }
+      converttexttomarkdown(
+        "# Hey! ## Hey2! ### Hey3! #### Hey4! ```# Hey! <br>##  Hey2! <br>###  Hey3! <br>####  Hey4! ``` <br>--- <br> I've written this in **markdown!!!** `**markdown!!!**`  Yeah, this is *italic* `*italic*`  This is another way to use _italic_ written like `_italic_`. <br> <br> Here's some niceee code: `print('hello world')` <br> Mutli-line code: ```import random <br>print(random.randint(1,10)) <br>print(\"done\") <br>``` <br> Lists: <br>- Hello <br>- Nice to meet ya <br> Not a list now <br> ## Info <br>What is this project for: <br>| Row 1 | Avaiable |<br>|---|---|<br>| Simplicity | ✔️ |<br>| Lightweight | ❌ |<br>| Wide range of applications | ✔️ |<br>The way this works is by converting the plain _markdown_ to **HTML** so it can render easily. This supports ~~all~~ most of the syntax, like that are ==shown== here. <br> There are also a few bugs like **_this_**. ### Guide <br>For more guide of info look [Markdown Guide](https://www.markdownguide.org/cheat-sheet/). <br> #### Supported Sytax: <br>| Syntax | Availability |<br>|---|---|<br>| Headings | ✔️ |<br>| Bold | ✔️ |<br>| Italic | ✔️ |<br>| Blockquote | In HTML |<br>| Ordered list | Manual |<br>| Unordered List | ✔️ |<br>| Code | ✔️ |<br>| Horizontal Rule | ✔️ |<br>| Link | ✔️ |<br>| Image | ✔️ |<br>| Table | ✔️ |<br>| Footnote | ❌ |<br>| Heading Id | ❌ |<br>| Strikethough | ✔️ |<br>| Task list | ❌ |<br>| Emoji | Manual |<br>| Highlight | ✔️ |<br>| Subscript | In HTML |<br>| Superscript | In HTML |<br>| Others | ❌ |"
+      );
+    </script>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+      #Main_heading {
+        text-align: center;
+        margin-bottom: 4%;
+      }
+      #inputarea {
+        min-width: 80vw;
+        min-height: 10vh;
+        resize: vertical;
+        position: relative;
+        transition: ease 0.5s;
+        left: 50%;
+        transform: translate(-50%, 0);
+        border: solid rgb(0, 0, 0, 0.4) 2px;
+        border-radius: 1em;
+        padding: 2.5vh;
+      }
+      #inputarea:hover {
+        transform: translate(-50%, 0) scale(1.02);
+      }
+      #inputarea:active {
+        transform: translate(-50%, 0) scale(1.05);
+      }
+      #displaybox {
+        position: relative;
+        width: 75vw;
+        min-height: 60vh;
+        left: 50%;
+        transform: translate(-50%, 0);
+        border: solid rgb(0, 0, 0, 0.3);
+        border-radius: 1em;
+        padding: 7.5vh;
+        margin: 3% 0%;
+        box-shadow: 0px 0px 10px rgba(84, 84, 84, 0.7);
+        /* transition: ease 1s; */
+      }
+      pre {
+        padding: 1.5%;
+        border-radius: 0.5em;
+        border: solid rgb(0, 0, 0, 0.3) 2px;
+        background-color: rgb(0, 0, 0, 0.1);
+        overflow: auto;
+      }
+      h1 {
+        margin-top: 5%;
+      }
+      table,
+      tr,
+      th,
+      td,
+      tbody,
+      thead {
+        padding: 0.2em;
+        border-radius: 0.3em;
+        margin: 0.1em;
+        border: solid 1px;
+        min-width: 50%;
+      }
+      .bar {
+        width: 100%;
+        height: 0.1em;
+        background-color: black;
+        border-radius: 1em;
+      }
+    </style>
+  </body>
+</html>
