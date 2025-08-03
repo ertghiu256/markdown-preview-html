@@ -469,27 +469,21 @@
           ) {
             if (ish1) {
               combinedtext += "</h1>";
-              ish1 = false;
             }
             if (ish2) {
               combinedtext += "</h2>";
-              ish2 = false;
             }
             if (ish3) {
               combinedtext += "</h3>";
-              ish3 = false;
             }
             if (ish4) {
               combinedtext += "</h4>";
-              ish4 = false;
             }
             if (ish5) {
               combinedtext += "</h5>";
-              ish5 = false;
             }
             if (ish6) {
               combinedtext += "</h6>";
-              ish6 = false;
             }
             if (isbold) {
               combinedtext +=
@@ -537,14 +531,24 @@
             }
             if (tablestate == 2 && !text[i + 1].includes("|")) {
               combinedtext += "</td></tr></tbody></table>";
-              tablestate = 0;
             }
             if (isblockquote) {
               combinedtext += "</blockquote>";
-              isblockquote = false;
+              isblockquote = false
             }
-            if (!(ish1 || ish2 || ish3 || tablestate != 0)) {
+            if (
+              !(ish1 || ish2 || ish3 || ish4 || ish5 || ish6 || tablestate != 0)
+            ) {
               combinedtext += "<br>";
+            }
+            ish1 = false;
+            ish2 = false;
+            ish3 = false;
+            ish4 = false;
+            ish5 = false;
+            ish6 = false;
+            if (tablestate == 2 && !text[i + 1].includes("|")) {
+              tablestate = 0;
             }
           } else {
             combinedtext += text[i] + " ";
@@ -642,6 +646,7 @@
     </style>
   </body>
 </html>
+
 
 
 
