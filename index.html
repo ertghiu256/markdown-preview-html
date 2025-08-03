@@ -348,7 +348,11 @@
               ish1 = false;
             }
           } else if (
-            text[i].match(/\-\-\-/g) &&
+            (
+              text[i].match(/\-\-\-/g) ||
+              text[i].match(/\_\_\_/g) ||
+              text[i].match(/\*\*\*/g) 
+            ) &&
             (text[i - 1] == "<br>" || text[i - 1] == "\n")
           ) {
             combinedtext += '<div class="bar"></div>';
@@ -626,5 +630,6 @@
     </style>
   </body>
 </html>
+
 
 
