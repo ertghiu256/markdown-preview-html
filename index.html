@@ -359,7 +359,7 @@
           ) {
             combinedtext += '<div class="bar"></div>';
           } else if ( 
-            text[i].match(/\> (.*?)/g) && 
+            text[i].match(/\>(.*?)/g) && 
             (text[i - 1] == "<br>" || text[i - 1] == "\n")
             && !isblockquote
           ) {
@@ -643,6 +643,7 @@
     </style>
   </body>
 </html>
+
 
 
 
