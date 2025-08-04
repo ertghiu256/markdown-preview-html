@@ -8,7 +8,7 @@
     <textarea
       id="inputarea"
       onchange="document.getElementById('displaybox').innerHTML = converttexttomarkdown(this.value);"
-      placeholder="Enter Markdown"
+      placeholder="Enter/Paste Markdown"
     ></textarea>
 
     <div id="displaybox"></div>
@@ -31,6 +31,8 @@
       let islink = false;
       let isimglink = false;
       let isblockquote = false;
+      let issup = false;
+      let issub = false;
       let tablestate = 0;
       function converttexttomarkdown(text) {
         combinedtext = "";
@@ -49,6 +51,8 @@
         islink = false;
         isimglink = false;
         isblockquote = false;
+        issup = false;
+        issub = false;
         tablestate = 0;
         text = String(text);
         text = text
@@ -87,24 +91,24 @@
             if (text[i].match(/\`(.*?)\`/gi)) {
               combinedtext +=
                 String(text[i])
-                  .replace(/\`(.*?)\`/gi, "<pre><code>$1</code></pre>")
+                  .replace(/\`(.*?)\`/gi, "<code>$1</code>")
                   .replace('"', "&quot;") + " ";
             } else if (!iscode) {
               combinedtext +=
                 String(text[i])
-                  .replace(/\`(.*?)/g, "<pre><code>$1")
+                  .replace(/\`(.*?)/g, "<code>$1")
                   .replace('"', "&quot;") + " ";
               iscode = true;
             } else if (text[i].match(/(.*?)\`/gi)) {
               combinedtext +=
                 String(text[i])
-                  .replace(/(.*?)\`/g, "$1</pre></code>")
+                  .replace(/(.*?)\`/g, "$1</code>")
                   .replace('"', "&quot;") + " ";
               iscode = false;
             } else {
               combinedtext +=
                 String(text[i])
-                  .replace(/\`/g, "</pre></code>")
+                  .replace(/\`/g, "</code>")
                   .replace('"', "&quot;") + " ";
               iscode = false;
             }
@@ -350,20 +354,18 @@
               ish1 = false;
             }
           } else if (
-            (
-              text[i].match(/\-\-\-/g) ||
+            (text[i].match(/\-\-\-/g) ||
               text[i].match(/\_\_\_/g) ||
-              text[i].match(/\*\*\*/g) 
-            ) &&
+              text[i].match(/\*\*\*/g)) &&
             (text[i - 1] == "<br>" || text[i - 1] == "\n")
           ) {
             combinedtext += '<div class="bar"></div>';
-          } else if ( 
-            text[i].match(/\>(.*?)/g) && 
-            (text[i - 1] == "<br>" || text[i - 1] == "\n")
-            && !isblockquote
+          } else if (
+            text[i].match(/\>(.*?)/g) &&
+            (text[i - 1] == "<br>" || text[i - 1] == "\n") &&
+            !isblockquote
           ) {
-            combinedtext += '<blockquote>';
+            combinedtext += "<blockquote>";
             isblockquote = true;
           } else if (text[i].match(/\*\*/g)) {
             if (text[i].match(/\*\*(.*?)\*\*/gi)) {
@@ -462,6 +464,38 @@
               combinedtext += String(text[i]).replace(/\~\~/gim, "</s>") + " ";
               isstrike = false;
             }
+          } else if (text[i].match(/\^(.*?)/g)) {
+            if (text[i].match(/\^(.*?)\^/gi)) {
+              combinedtext +=
+                String(text[i]).replace(/\^(.*?)\^/gi, "<sup>$1</sup>") + " ";
+            } else if (!issup) {
+              combinedtext +=
+                String(text[i]).replace(/\^(.*?)/g, "<sup>$1") + " ";
+              issup = true;
+            } else if (text[i].match(/(.*?)\^/gi)) {
+              combinedtext +=
+                String(text[i]).replace(/(.*?)\^/g, "$1</sup>") + " ";
+              issup = false;
+            } else {
+              combinedtext += String(text[i]).replace(/\*\*/g, "</sup>") + " ";
+              issup = false;
+            }
+          } else if (text[i].match(/\~(.*?)/g)) {
+            if (text[i].match(/\~(.*?)\~/gi)) {
+              combinedtext +=
+                String(text[i]).replace(/\~(.*?)\~/gi, "<sub>$1</sub>") + " ";
+            } else if (!issub) {
+              combinedtext +=
+                String(text[i]).replace(/\~(.*?)/g, "<sub>$1") + " ";
+              issub = true;
+            } else if (text[i].match(/(.*?)\~/gi)) {
+              combinedtext +=
+                String(text[i]).replace(/(.*?)\~/g, "$1</sub>") + " ";
+              issub = false;
+            } else {
+              combinedtext += String(text[i]).replace(/\~/g, "</sub>") + " ";
+              issub = false;
+            }
           } else if (
             text[i] == "<br>" ||
             text[i] == "\n" ||
@@ -534,7 +568,15 @@
             }
             if (isblockquote) {
               combinedtext += "</blockquote>";
-              isblockquote = false
+              isblockquote = false;
+            }
+            if (issub) {
+              combinedtext += "</sub>";
+              issub = false;
+            }
+            if (issup) {
+              combinedtext += "</sup>";
+              issup = false;
             }
             if (
               !(ish1 || ish2 || ish3 || ish4 || ish5 || ish6 || tablestate != 0)
@@ -556,10 +598,9 @@
         }
         return String(combinedtext);
       }
-      document.getElementById('displaybox').innerHTML = 
-        converttexttomarkdown(
-          "# Hey! ## Hey2! ### Hey3! #### Hey4! ```# Hey! <br>##  Hey2! <br>###  Hey3! <br>####  Hey4! ``` <br>--- <br> I've written this in **markdown!!!** `**markdown!!!**`  Yeah, this is *italic* `*italic*`  This is another way to use _italic_ written like `_italic_`. <br> <br> Here's some niceee code: `print('hello world')` <br> Mutli-line code: ```import random <br>print(random.randint(1,10)) <br>print(\"done\") <br>``` <br> Lists: <br>- Hello <br>- Nice to meet ya <br> Not a list now <br> ## Info <br>What is this project for: <br>| Column 1 | Avaiable |<br>|---|---|<br>| Simplicity | ✔️ |<br>| Lightweight | ❌ |<br>| Wide range of applications | ✔️ |<br>The way this works is by converting the plain _markdown_ to **HTML** so it can render easily. This supports ~~all~~ most of the syntax, like that are ==shown== here. <br> There are also a few bugs like **_this_**. ### Guide <br>For more guide of info look [Markdown Guide](https://www.markdownguide.org/cheat-sheet/). <br> #### Supported Sytax: <br>| Syntax | Availability |<br>|---|---|<br>| Headings | ✔️ |<br>| Bold | ✔️ |<br>| Italic | ✔️ |<br>| Blockquote | ✔️ |<br>| Ordered list | Manual |<br>| Unordered List | ✔️ |<br>| Code | ✔️ |<br>| Horizontal Rule | ✔️ |<br>| Link | ✔️ |<br>| Image | ✔️ |<br>| Table | ✔️ |<br>| Footnote | ❌ |<br>| Heading Id | ❌ |<br>| Strikethough | ✔️ |<br>| Task list | ❌ |<br>| Emoji | Manual |<br>| Highlight | ✔️ |<br>| Subscript | In HTML |<br>| Superscript | In HTML |<br>| Others | ❌ |"
-        );
+      document.getElementById("displaybox").innerHTML = converttexttomarkdown(
+        "# Hey! ## Hey2! ### Hey3! #### Hey4! ```# Hey! <br>##  Hey2! <br>###  Hey3! <br>####  Hey4! ``` <br>--- <br> I've written this in **markdown!!!** `**markdown!!!**`  Yeah, this is *italic* `*italic*`  This is another way to use _italic_ written like `_italic_`. <br> <br> Here's some niceee code: `print('hello world')` <br> Mutli-line code: ```import random <br>print(random.randint(1,10)) <br>print(\"done\") <br>``` <br> Lists: <br>- Hello <br>- Nice to meet ya <br> Not a list now <br> ## Info <br>What is this project for: <br>| Column 1 | Avaiable |<br>|---|---|<br>| Simplicity | ✔️ |<br>| Lightweight | ❌ |<br>| Wide range of applications | ✔️ |<br>The way this works is by converting the plain _markdown_ to **HTML** so it can render easily. This supports ~~all~~ most of the syntax, like that are ==shown== here. <br> There are also a few bugs like **_this_**. ### Guide <br>For more guide of info look [Markdown Guide](https://www.markdownguide.org/cheat-sheet/). <br> #### Supported Sytax: <br>| Syntax | Availability |<br>|---|---|<br>| Headings | ✔️ |<br>| Bold | ✔️ |<br>| Italic | ✔️ |<br>| Blockquote | ✔️ |<br>| Ordered list | Manual |<br>| Unordered List | ✔️ |<br>| Code | ✔️ |<br>| Horizontal Rule | ✔️ |<br>| Link | ✔️ |<br>| Image | ✔️ |<br>| Table | ✔️ |<br>| Footnote | ❌ |<br>| Heading Id | ❌ |<br>| Strikethough | ✔️ |<br>| Task list | ✔️ |<br>| Emoji | Manual |<br>| Highlight | ✔️ |<br>| Subscript | ✔️ |<br>| Superscript | ✔️ |<br>| Others | ❌ |"
+      );
     </script>
     <style>
       body {
@@ -633,24 +674,16 @@
         background-color: black;
         border-radius: 1em;
       }
-      @keyframes anin{
+      @keyframes anin {
         0% {
-          opacity: 0.0; 
+          opacity: 0;
           margin-top: 50%;
         }
         75% {
-          opacity: 1.0; 
+          opacity: 1;
           margin-top: 0%;
         }
       }
     </style>
   </body>
 </html>
-
-
-
-
-
-
-
-
