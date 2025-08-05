@@ -55,6 +55,9 @@
         issub = false;
         tablestate = 0;
         text = String(text);
+        if (save == true) {
+          localStorage.setItem("MarkdownSave", text);
+        }
         text = text
           .replaceAll(/  /g, " &nbsp ")
           .replaceAll(/<br>/gim, " <br> ")
@@ -124,7 +127,7 @@
             let link;
             if (text[i].match(/\((.*?)\)/g)) {
               link = text[i].match(/\((.*?)\)/g);
-            } 
+            }
             if (text[i + 1]) {
               if (text[i + 1].match(/\((.*?)\)/g)) {
                 link = text[i + 1].match(/\((.*?)\)/g);
@@ -139,7 +142,8 @@
               if (text[i + 3].match(/\((.*?)\)/g)) {
                 link = text[i + 3].match(/\((.*?)\)/g);
               }
-            } if (text[i + 4]  ) {
+            }
+            if (text[i + 4]) {
               if (text[i + 4].match(/\((.*?)\)/g)) {
                 link = text[i + 4].match(/\((.*?)\)/g);
               }
@@ -202,8 +206,7 @@
                   text[i + 4].match(/(.*?)\]/g) &&
                   !text[i + 4].match(/\[(.*?)/g)
                 ) {
-                  text[i + 4] = text[i + 4]
-                    .replace(/(.*?)\]/g, "$1")
+                  text[i + 4] = text[i + 4].replace(/(.*?)\]/g, "$1");
                 }
               }
             } else {
@@ -293,14 +296,16 @@
                   text[i + 4].match(/(.*?)\]/g) &&
                   !text[i + 4].match(/\!\[(.*?)/g)
                 ) {
-                  text[i + 4] = text[i + 4]
-                    .replace(/(.*?)\]/g, "$1")
+                  text[i + 4] = text[i + 4].replace(/(.*?)\]/g, "$1");
                 }
               }
             } else {
               combinedtext += text[i];
             }
-          } else if (String(text[i]).match(/(.*?)\|(.*?)/g) && (text[i-1] == "<br>" || text[i-1] == "\n" || tablestate > 0)) {
+          } else if (
+            String(text[i]).match(/(.*?)\|(.*?)/g) &&
+            (text[i - 1] == "<br>" || text[i - 1] == "\n" || tablestate > 0)
+          ) {
             // alert(text[i]);
             if (tablestate == 0) {
               if (
@@ -349,307 +354,347 @@
             // if (text[i] == "\|\-\-\-\|\-\-\-\|\-\-\-\|\-\-\-\|\-\-\-\|") {
             //   text[i] = "";
             // }
-          } else if (text[i] == "######") {
-            if (!ish6) {
-              combinedtext += "<h6>";
-              ish6 = true;
-            } else {
-              combinedtext += "</h6>";
-              ish6 = false;
-            }
-          } else if (text[i] == "#####") {
-            if (!ish5) {
-              combinedtext += "<h5>";
-              ish5 = true;
-            } else {
-              combinedtext += "</h5>";
-              ish5 = false;
-            }
-          } else if (text[i] == "####") {
-            if (!ish4) {
-              combinedtext += "<h4>";
-              ish4 = true;
-            } else {
-              combinedtext += "</h4>";
-              ish4 = false;
-            }
-          } else if (text[i] == "###") {
-            if (!ish3) {
-              combinedtext += "<h3>";
-              ish3 = true;
-            } else {
-              combinedtext += "</h3>";
-              ish3 = false;
-            }
-          } else if (text[i] == "##") {
-            if (!ish2) {
-              combinedtext += "<h2>";
-              ish2 = true;
-            } else {
-              combinedtext += "</h2>";
-              ish2 = false;
-            }
-          } else if (text[i] == "#") {
-            if (!ish1) {
-              combinedtext += "<h1>";
-              ish1 = true;
-            } else {
-              combinedtext += "</h1>";
-              ish1 = false;
-            }
-          } else if (
-            (text[i].match(/\-\-\-/g) ||
-              text[i].match(/\_\_\_/g) ||
-              text[i].match(/\*\*\*/g)) &&
-            (text[i - 1] == "<br>" || text[i - 1] == "\n")
-          ) {
-            combinedtext += '<div class="bar"></div>';
-          } else if (
-            text[i].match(/\>(.*?)/g) &&
-            (text[i - 1] == "<br>" || text[i - 1] == "\n") &&
-            !isblockquote
-          ) {
-            combinedtext += "<blockquote>";
-            isblockquote = true;
-          } else if (text[i].match(/\*\*/g)) {
-            if (text[i].match(/\*\*(.*?)\*\*/gi)) {
-              combinedtext +=
-                String(text[i]).replace(/\*\*(.*?)\*\*/gi, "<b>$1</b>") + " ";
-            } else if (!isbold) {
-              combinedtext +=
-                String(text[i]).replace(/\*\*(.*?)/g, "<b>$1") + " ";
-              isbold = true;
-            } else if (text[i].match(/(.*?)\*\*/gi)) {
-              combinedtext +=
-                String(text[i]).replace(/(.*?)\*\*/g, "$1</b>") + " ";
-              isbold = false;
-            } else {
-              combinedtext += String(text[i]).replace(/\*\*/g, "</b>") + " ";
-              isbold = false;
-            }
-          } else if (text[i].match(/\=\=/g)) {
-            if (text[i].match(/\=\=(.*?)\=\=/gi)) {
-              combinedtext +=
-                String(text[i]).replace(/\=\=(.*?)\=\=/gi, "<mark>$1</mark>") +
-                " ";
-            } else if (!ismark) {
-              combinedtext +=
-                String(text[i]).replace(/\=\=(.*?)/g, "<mark>$1") + " ";
-              ismark = true;
-            } else if (text[i].match(/(.*?)\=\=/gi)) {
-              combinedtext +=
-                String(text[i]).replace(/(.*?)\=\=/g, "$1</mark>") + " ";
-              ismark = false;
-            } else {
-              combinedtext += String(text[i]).replace(/\=\=/g, "</mark>") + " ";
-              ismark = false;
-            }
-          } else if (
-            (text[i].match(/\-/gim) || text[i].match(/\*/gim)) &&
-            (text[i - 1] == "<br>" || text[i - 1] == "\n")
-          ) {
-            if (!islist) {
-              if (text[i].match(/\-/gim)) {
-                combinedtext += String(text[i]).replace(/\-/gi, "<ul><li>");
-              }
-              if (text[i].match(/\*/gim)) {
-                combinedtext += String(text[i]).replace(/\*/gi, "<ul><li>");
-              }
-              islist = true;
-            } else {
-              combinedtext += "<li>";
-              // islist = false;
-            }
-          } else if (text[i].match(/\*/g)) {
-            if (text[i].match(/\*(.*?)\*/gi)) {
-              combinedtext +=
-                String(text[i]).replace(/\*(.*?)\*/gi, "<i>$1</i>") + " ";
-            } else if (!isitalic) {
-              combinedtext +=
-                String(text[i]).replace(/\*(.*?)/g, "<i>$1") + " ";
-              isitalic = true;
-            } else if (text[i].match(/(.*?)\*/gi)) {
-              combinedtext +=
-                String(text[i]).replace(/(.*?)\*/g, "$1</i>") + " ";
-              isitalic = false;
-            } else {
-              combinedtext += String(text[i]).replace(/\*/g, "</i>") + " ";
-              isitalic = false;
-            }
-          } else if (text[i].match(/\_/g)) {
-            if (text[i].match(/\_(.*?)\_/gi)) {
-              combinedtext +=
-                String(text[i]).replace(/\_(.*?)\_/gi, "<i>$1</i>") + " ";
-            } else if (!isitalic) {
-              combinedtext +=
-                String(text[i]).replace(/\_(.*?)/g, "<i>$1") + " ";
-              isitalic = true;
-            } else if (text[i].match(/(.*?)\_/gi)) {
-              combinedtext +=
-                String(text[i]).replace(/(.*?)\_/g, "$1</i>") + " ";
-              isitalic = false;
-            } else {
-              combinedtext += String(text[i]).replace(/\_/g, "</i>") + " ";
-              isitalic = false;
-            }
-          } else if (text[i].match(/\~\~/gim)) {
-            if (text[i].match(/\~\~(.*?)\~\~/gi)) {
-              combinedtext +=
-                String(text[i]).replace(/\~\~(.*?)\~\~/gim, "<s>$1</s>") + " ";
-            } else if (!isstrike) {
-              combinedtext +=
-                String(text[i]).replace(/\~\~(.*?)/gim, "<s>$1") + " ";
-              isstrike = true;
-            } else if (text[i].match(/(.*?)\~\~/gim)) {
-              combinedtext +=
-                String(text[i]).replace(/(.*?)\~\~/gim, "$1</s>") + " ";
-              isstrike = false;
-            } else {
-              combinedtext += String(text[i]).replace(/\~\~/gim, "</s>") + " ";
-              isstrike = false;
-            }
-          } else if (text[i].match(/\^(.*?)/g)) {
-            if (text[i].match(/\^(.*?)\^/gi)) {
-              combinedtext +=
-                String(text[i]).replace(/\^(.*?)\^/gi, "<sup>$1</sup>") + " ";
-            } else if (!issup) {
-              combinedtext +=
-                String(text[i]).replace(/\^(.*?)/g, "<sup>$1") + " ";
-              issup = true;
-            } else if (text[i].match(/(.*?)\^/gi)) {
-              combinedtext +=
-                String(text[i]).replace(/(.*?)\^/g, "$1</sup>") + " ";
-              issup = false;
-            } else {
-              combinedtext += String(text[i]).replace(/\*\*/g, "</sup>") + " ";
-              issup = false;
-            }
-          } else if (text[i].match(/\~(.*?)/g)) {
-            if (text[i].match(/\~(.*?)\~/gi)) {
-              combinedtext +=
-                String(text[i]).replace(/\~(.*?)\~/gi, "<sub>$1</sub>") + " ";
-            } else if (!issub) {
-              combinedtext +=
-                String(text[i]).replace(/\~(.*?)/g, "<sub>$1") + " ";
-              issub = true;
-            } else if (text[i].match(/(.*?)\~/gi)) {
-              combinedtext +=
-                String(text[i]).replace(/(.*?)\~/g, "$1</sub>") + " ";
-              issub = false;
-            } else {
-              combinedtext += String(text[i]).replace(/\~/g, "</sub>") + " ";
-              issub = false;
-            }
-          } else if (
-            text[i] == "<br>" ||
-            text[i] == "\n" ||
-            text[i].match(/\n/gim)
-          ) {
-            if (ish1) {
-              combinedtext += "</h1>";
-            }
-            if (ish2) {
-              combinedtext += "</h2>";
-            }
-            if (ish3) {
-              combinedtext += "</h3>";
-            }
-            if (ish4) {
-              combinedtext += "</h4>";
-            }
-            if (ish5) {
-              combinedtext += "</h5>";
-            }
-            if (ish6) {
-              combinedtext += "</h6>";
-            }
-            if (isbold) {
-              combinedtext +=
-                /*String(text[i]).replace(/\*\*\/g, "</b>") + */ "</b> ";
-              isbold = false;
-            }
-            if (ismark) {
-              combinedtext +=
-                /*String(text[i]).replace(/\*\*\/g, "</b>") + */ "</mark> ";
-              ismark = false;
-            }
-            if (isitalic) {
-              combinedtext +=
-                /*String(text[i]).replace(/\*\/g, "</i>") +*/ "</i> ";
-              isitalic = false;
-            }
-            if (isstrike) {
-              combinedtext +=
-                /*String(text[i]).replace(/\~\~\/g, "</s>") +*/ "</s> ";
-              isstrike = false;
-            }
-            if (ismark) {
-              combinedtext += "</mark>";
-              ismark = false;
-            }
-            if (islink) {
-              combinedtext += "</a>";
-              islink = false;
-            }
-            if (isimglink) {
-              // combinedtext += "</a>"
-              islink = false;
-            }
-            if (
-              islist &&
-              !(
-                text[i + 1] == "-" ||
-                text[i + 2] == "-" ||
-                text[i + 1] == "*" ||
-                text[i + 2] == "*"
-              )
-            ) {
-              combinedtext += "</ul></li>";
-              islist = false;
-            }
-            if (tablestate == 2 && !text[i + 1].includes("|")) {
-              combinedtext += "</td></tr></tbody></table>";
-            }
-            if (isblockquote) {
-              combinedtext += "</blockquote>";
-              isblockquote = false;
-            }
-            if (issub) {
-              combinedtext += "</sub>";
-              issub = false;
-            }
-            if (issup) {
-              combinedtext += "</sup>";
-              issup = false;
-            }
-            if (
-              !(ish1 || ish2 || ish3 || ish4 || ish5 || ish6 || tablestate != 0)
-            ) {
-              combinedtext += "<br>";
-            }
-            ish1 = false;
-            ish2 = false;
-            ish3 = false;
-            ish4 = false;
-            ish5 = false;
-            ish6 = false;
-            if (tablestate == 2 && !text[i + 1].includes("|")) {
-              tablestate = 0;
-            }
           } else {
-            combinedtext += text[i] + " ";
+            if (
+              text[i][0] == ">" &&
+              text[i].match(/\>(.*?)/g) &&
+              (text[i - 1] == "<br>" || text[i - 1] == "\n" || i == 0) &&
+              !isblockquote
+            ) {
+              text[i] = "<blockquote>";
+              isblockquote = true;
+            }
+            if (text[i] == "######") {
+              if (!ish6) {
+                text[i] = "<h6>";
+                ish6 = true;
+              } else {
+                text[i] = "</h6>";
+                ish6 = false;
+              }
+            } else if (text[i] == "#####") {
+              if (!ish5) {
+                text[i] = "<h5>";
+                ish5 = true;
+              } else {
+                text[i] = "</h5>";
+                ish5 = false;
+              }
+            } else if (text[i] == "####") {
+              if (!ish4) {
+                text[i] = "<h4>";
+                ish4 = true;
+              } else {
+                text[i] = "</h4>";
+                ish4 = false;
+              }
+            } else if (text[i] == "###") {
+              if (!ish3) {
+                text[i] = "<h3>";
+                ish3 = true;
+              } else {
+                text[i] = "</h3>";
+                ish3 = false;
+              }
+            } else if (text[i] == "##") {
+              if (!ish2) {
+                text[i] = "<h2>";
+                ish2 = true;
+              } else {
+                text[i] = "</h2>";
+                ish2 = false;
+              }
+            } else if (text[i] == "#") {
+              if (!ish1) {
+                text[i] = "<h1>";
+                ish1 = true;
+              } else {
+                text[i] = "</h1>";
+                ish1 = false;
+              }
+            }
+            if (
+              (text[i].match(/\-\-\-/g) ||
+                text[i].match(/\_\_\_/g) ||
+                text[i].match(/\*\*\*/g)) &&
+              (text[i - 1] == "<br>" || text[i - 1] == "\n")
+            ) {
+              text[i] = '<div class="bar"></div>';
+            }
+            if (text[i].match(/\*\*/g)) {
+              if (text[i].match(/\*\*(.*?)\*\*/gi)) {
+                text[i] =
+                  String(text[i]).replace(/\*\*(.*?)\*\*/gi, "<b>$1</b>") + " ";
+              } else if (!isbold) {
+                text[i] = String(text[i]).replace(/\*\*(.*?)/g, "<b>$1") + " ";
+                isbold = true;
+              } else if (text[i].match(/(.*?)\*\*/gi)) {
+                text[i] = String(text[i]).replace(/(.*?)\*\*/g, "$1</b>") + " ";
+                isbold = false;
+              } else {
+                text[i] = String(text[i]).replace(/\*\*/g, "</b>") + " ";
+                isbold = false;
+              }
+            } else if (text[i].match(/\_\_/g) && !text[i].match(/\_\_\_/g)) {
+              if (text[i].match(/\_\_(.*?)\_\_/gi)) {
+                text[i] =
+                  String(text[i]).replace(/\_\_(.*?)\_\_/gi, "<b>$1</b>") + " ";
+              } else if (!isbold) {
+                text[i] = String(text[i]).replace(/\_\_(.*?)/g, "<b>$1") + " ";
+                isbold = true;
+              } else if (text[i].match(/(.*?)\_\_/gi)) {
+                text[i] = String(text[i]).replace(/(.*?)\_\_/g, "$1</b>") + " ";
+                isbold = false;
+              } else {
+                text[i] = String(text[i]).replace(/\_\_/g, "</b>") + " ";
+                isbold = false;
+              }
+            }
+
+            if (text[i].match(/\=\=/g)) {
+              if (text[i].match(/\=\=(.*?)\=\=/gi)) {
+                text[i] =
+                  String(text[i]).replace(
+                    /\=\=(.*?)\=\=/gi,
+                    "<mark>$1</mark>"
+                  ) + " ";
+              } else if (!ismark) {
+                text[i] =
+                  String(text[i]).replace(/\=\=(.*?)/g, "<mark>$1") + " ";
+                ismark = true;
+              } else if (text[i].match(/(.*?)\=\=/gi)) {
+                text[i] =
+                  String(text[i]).replace(/(.*?)\=\=/g, "$1</mark>") + " ";
+                ismark = false;
+              } else {
+                text[i] = String(text[i]).replace(/\=\=/g, "</mark>") + " ";
+                ismark = false;
+              }
+            }
+            if (
+              ((text[i].match(/\-/gim) && !text[i].match(/\-\-\-/g)) ||
+                (text[i].match(/\*/gim) && !text[i].match(/\*\*/g))) &&
+              (text[i - 1] == "<br>" || text[i - 1] == "\n")
+            ) {
+              if (!islist) {
+                if (text[i].match(/\-/gim)) {
+                  text[i] = String(text[i]).replace(/\-/gi, "<ul><li>");
+                }
+                if (text[i].match(/\*/gim)) {
+                  text[i] = String(text[i]).replace(/\*/gi, "<ul><li>");
+                }
+                islist = true;
+              } else {
+                text[i] = "<li>";
+                // islist = false;
+              }
+            }
+            if (
+              text[i].match(/\*/g) &&
+              !text[i].match(/\*\*/g) &&
+              !(text[i - 1] == "<br>" || text[i - 1] == "\n")
+            ) {
+              if (text[i].match(/\*(.*?)\*/gi)) {
+                text[i] =
+                  String(text[i]).replace(/\*(.*?)\*/gi, "<i>$1</i>") + " ";
+              } else if (!isitalic) {
+                text[i] = String(text[i]).replace(/\*(.*?)/g, "<i>$1") + " ";
+                isitalic = true;
+              } else if (text[i].match(/(.*?)\*/gi)) {
+                text[i] = String(text[i]).replace(/(.*?)\*/g, "$1</i>") + " ";
+                isitalic = false;
+              } else {
+                text[i] = String(text[i]).replace(/\*/g, "</i>") + " ";
+                isitalic = false;
+              }
+            } else if (text[i].match(/\_/g)) {
+              if (text[i].match(/\_(.*?)\_/gi)) {
+                text[i] =
+                  String(text[i]).replace(/\_(.*?)\_/gi, "<i>$1</i>") + " ";
+              } else if (!isitalic) {
+                text[i] = String(text[i]).replace(/\_(.*?)/g, "<i>$1") + " ";
+                isitalic = true;
+              } else if (text[i].match(/(.*?)\_/gi)) {
+                text[i] = String(text[i]).replace(/(.*?)\_/g, "$1</i>") + " ";
+                isitalic = false;
+              } else {
+                text[i] = String(text[i]).replace(/\_/g, "</i>") + " ";
+                isitalic = false;
+              }
+            }
+
+            if (text[i].match(/\~\~/gim)) {
+              if (text[i].match(/\~\~(.*?)\~\~/gi)) {
+                text[i] =
+                  String(text[i]).replace(/\~\~(.*?)\~\~/gim, "<s>$1</s>") +
+                  " ";
+              } else if (!isstrike) {
+                text[i] =
+                  String(text[i]).replace(/\~\~(.*?)/gim, "<s>$1") + " ";
+                isstrike = true;
+              } else if (text[i].match(/(.*?)\~\~/gim)) {
+                text[i] =
+                  String(text[i]).replace(/(.*?)\~\~/gim, "$1</s>") + " ";
+                isstrike = false;
+              } else {
+                text[i] = String(text[i]).replace(/\~\~/gim, "</s>") + " ";
+                isstrike = false;
+              }
+            } else if (text[i].match(/\~(.*?)/g)) {
+              if (text[i].match(/\~(.*?)\~/gi)) {
+                text[i] =
+                  String(text[i]).replace(/\~(.*?)\~/gi, "<sub>$1</sub>") + " ";
+              } else if (!issub) {
+                text[i] = String(text[i]).replace(/\~(.*?)/g, "<sub>$1") + " ";
+                issub = true;
+              } else if (text[i].match(/(.*?)\~/gi)) {
+                text[i] = String(text[i]).replace(/(.*?)\~/g, "$1</sub>") + " ";
+                issub = false;
+              } else {
+                text[i] = String(text[i]).replace(/\~/g, "</sub>") + " ";
+                issub = false;
+              }
+            }
+
+            if (text[i].match(/\^(.*?)/g)) {
+              if (text[i].match(/\^(.*?)\^/gi)) {
+                text[i] =
+                  String(text[i]).replace(/\^(.*?)\^/gi, "<sup>$1</sup>") + " ";
+              } else if (!issup) {
+                text[i] = String(text[i]).replace(/\^(.*?)/g, "<sup>$1") + " ";
+                issup = true;
+              } else if (text[i].match(/(.*?)\^/gi)) {
+                text[i] = String(text[i]).replace(/(.*?)\^/g, "$1</sup>") + " ";
+                issup = false;
+              } else {
+                text[i] = String(text[i]).replace(/\*\*/g, "</sup>") + " ";
+                issup = false;
+              }
+            }
+            if (
+              text[i] == "<br>" ||
+              text[i] == "\n" ||
+              text[i].match(/\n/gim) ||
+              text[i].match(/\<br\>/gim)
+            ) {
+              if (ish1) {
+                combinedtext += "</h1>";
+              }
+              if (ish2) {
+                combinedtext += "</h2>";
+              }
+              if (ish3) {
+                combinedtext += "</h3>";
+              }
+              if (ish4) {
+                combinedtext += "</h4>";
+              }
+              if (ish5) {
+                combinedtext += "</h5>";
+              }
+              if (ish6) {
+                combinedtext += "</h6>";
+              }
+              if (isbold) {
+                combinedtext +=
+                  /*String(text[i]).replace(/\*\*\/g, "</b>") + */ "</b> ";
+                isbold = false;
+              }
+              if (ismark) {
+                combinedtext +=
+                  /*String(text[i]).replace(/\*\*\/g, "</b>") + */ "</mark> ";
+                ismark = false;
+              }
+              if (isitalic) {
+                combinedtext +=
+                  /*String(text[i]).replace(/\*\/g, "</i>") +*/ "</i> ";
+                isitalic = false;
+              }
+              if (isstrike) {
+                combinedtext +=
+                  /*String(text[i]).replace(/\~\~\/g, "</s>") +*/ "</s> ";
+                isstrike = false;
+              }
+              if (ismark) {
+                combinedtext += "</mark>";
+                ismark = false;
+              }
+              if (islink) {
+                combinedtext += "</a>";
+                islink = false;
+              }
+              if (isimglink) {
+                // combinedtext += "</a>"
+                islink = false;
+              }
+              if (
+                islist &&
+                !(
+                  text[i + 1] == "-" ||
+                  text[i + 2] == "-" ||
+                  text[i + 1] == "*" ||
+                  text[i + 2] == "*"
+                )
+              ) {
+                combinedtext += "</ul></li>";
+                islist = false;
+              }
+              if (tablestate == 2 && !text[i + 1].includes("|")) {
+                combinedtext += "</td></tr></tbody></table>";
+              }
+              if (isblockquote) {
+                combinedtext += "</blockquote>";
+                isblockquote = false;
+              }
+              if (issub) {
+                combinedtext += "</sub>";
+                issub = false;
+              }
+              if (issup) {
+                combinedtext += "</sup>";
+                issup = false;
+              }
+              if (
+                !(
+                  ish1 ||
+                  ish2 ||
+                  ish3 ||
+                  ish4 ||
+                  ish5 ||
+                  ish6 ||
+                  tablestate != 0
+                )
+              ) {
+                combinedtext += "<br>";
+              }
+              ish1 = false;
+              ish2 = false;
+              ish3 = false;
+              ish4 = false;
+              ish5 = false;
+              ish6 = false;
+              if (tablestate == 2 && !text[i + 1].includes("|")) {
+                tablestate = 0;
+              }
+            } else {
+              combinedtext += text[i] + " ";
+            }
           }
-        }
-        if (save == true){
-          localStorage.setItem("MarkdownSave", text.join(" "));
         }
         return String(combinedtext);
       }
-      if (localStorage.getItem("MarkdownSave") && localStorage.getItem("MarkdownSave") != ""){
-        document.getElementById("inputarea").value = localStorage.getItem("MarkdownSave").replace(/\<br\> /gi, "\n").replaceAll(/ \&nbsp/g, " ");
+      if (
+        localStorage.getItem("MarkdownSave") &&
+        localStorage.getItem("MarkdownSave") != ""
+      ) {
+        document.getElementById("inputarea").value = localStorage
+          .getItem("MarkdownSave")
+          .replace(/\<br\> /gi, "\n")
+          .replaceAll(/ \&nbsp/g, " ");
       }
       document.getElementById("displaybox").innerHTML = converttexttomarkdown(
-        "# Hey! ## Hey2! ### Hey3! #### Hey4! ```# Hey! <br>##  Hey2! <br>###  Hey3! <br>####  Hey4! ``` <br>--- <br> I've written this in **markdown!!!** `**markdown!!!**`  Yeah, this is *italic* `*italic*`  This is another way to use _italic_ written like `_italic_`. <br> <br> Here's some niceee code: `print('hello world')` <br> Mutli-line code: ```import random <br>print(random.randint(1,10)) <br>print(\"done\") <br>``` <br> Lists: <br>- Hello <br>- Nice to meet ya <br> Not a list now <br> ## Info <br>What is this project for: <br>| Column 1 | Avaiable |<br>|---|---|<br>| Simplicity | ✔️ |<br>| Lightweight | ❌ |<br>| Wide range of applications | ✔️ |<br>The way this works is by converting the plain _markdown_ to **HTML** so it can render easily. This supports ~~all~~ most of the syntax, like that are ==shown== here. <br> There are also a few bugs like **_this_**. ### Guide <br>For more guide of info look [Markdown Guide](https://www.markdownguide.org/cheat-sheet/). <br> #### Supported Sytax: <br>| Syntax | Availability |<br>|---|---|<br>| Headings | ✔️ |<br>| Bold | ✔️ |<br>| Italic | ✔️ |<br>| Blockquote | ✔️ |<br>| Ordered list | Manual |<br>| Unordered List | ✔️ |<br>| Code | ✔️ |<br>| Horizontal Rule | ✔️ |<br>| Link | ✔️ |<br>| Image | ✔️ |<br>| Table | ✔️ |<br>| Footnote | ❌ |<br>| Heading Id | ❌ |<br>| Strikethough | ✔️ |<br>| Task list | ✔️ |<br>| Emoji | Manual |<br>| Highlight | ✔️ |<br>| Subscript | ✔️ |<br>| Superscript | ✔️ |<br>| Others | ❌ |", false
+        "# Hey! ## Hey2! ### Hey3! #### Hey4! ```# Hey! <br>##  Hey2! <br>###  Hey3! <br>####  Hey4! ``` <br>--- <br> I've written this in **markdown!!!** `**markdown!!!**`  Yeah, this is *italic* `*italic*`  This is another way to use _italic_ written like `_italic_`. <br> <br> Here's some niceee code: `print('hello world')` <br> Mutli-line code: ```import random <br>print(random.randint(1,10)) <br>print(\"done\") <br>``` <br> Lists: <br>- Hello <br>- Nice to meet ya <br> Not a list now <br> ## Info <br>What is this project for: <br>| Column 1 | Avaiable |<br>|---|---|<br>| Simplicity | ✔️ |<br>| Lightweight | ❌ |<br>| Wide range of applications | ✔️ |<br>The way this works is by converting the plain _markdown_ to **HTML** so it can render easily. This supports ~~all~~ most of the syntax, like that are ==shown== here. <br> There are also a few bugs like **_this_**. ### Guide <br>For more guide of info look [Markdown Guide](https://www.markdownguide.org/cheat-sheet/). <br> #### Supported Sytax: <br>| Syntax | Availability |<br>|---|---|<br>| Headings | ✔️ |<br>| Bold | ✔️ |<br>| Italic | ✔️ |<br>| Blockquote | ✔️ |<br>| Ordered list | Manual |<br>| Unordered List | ✔️ |<br>| Code | ✔️ |<br>| Horizontal Rule | ✔️ |<br>| Link | ✔️ |<br>| Image | ✔️ |<br>| Table | ✔️ |<br>| Footnote | ❌ |<br>| Heading Id | ❌ |<br>| Strikethough | ✔️ |<br>| Task list | ✔️ |<br>| Emoji | Manual |<br>| Highlight | ✔️ |<br>| Subscript | ✔️ |<br>| Superscript | ✔️ |<br>| Others | ❌ |",
+        false
       );
     </script>
     <style>
@@ -657,7 +702,12 @@
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
         scroll-behavior: smooth;
         background: #edfaff;
-        background: linear-gradient(0deg,rgba(237, 250, 255, 1) 0%, rgba(255, 240, 250, 1) 50%, rgba(255, 245, 235, 1) 100%);
+        background: linear-gradient(
+          0deg,
+          rgba(237, 250, 255, 1) 0%,
+          rgba(255, 240, 250, 1) 50%,
+          rgba(255, 245, 235, 1) 100%
+        );
       }
       #Main_heading {
         text-align: center;
@@ -676,7 +726,7 @@
         border: solid rgb(0, 0, 0, 0.4) 2px;
         border-radius: 2em;
         padding: 2.5vw;
-        background-color:rgba(255,255,255,0.8);
+        background-color: rgba(255, 255, 255, 0.8);
         animation: anin 2s 1;
         transition: ease 1s;
       }
@@ -697,7 +747,7 @@
         padding: 5vw;
         margin: 3% 0%;
         box-shadow: 0px 0px 10px rgba(84, 84, 84, 0.5);
-        background-color:rgba(255,255,255,0.8);
+        background-color: rgba(255, 255, 255, 0.8);
         transition: ease 1s;
         animation: anin 1s 1;
       }
@@ -722,6 +772,12 @@
         border: solid 1px;
         min-width: 50%;
       }
+      blockquote {
+        margin: 0%;
+        border-left: solid rgb(220, 220, 220) 0.5em;
+        padding: 0.5%;
+        padding-left: 2%;
+      }
       .bar {
         width: 100%;
         height: 0.1em;
@@ -744,4 +800,3 @@
     </style>
   </body>
 </html>
-
