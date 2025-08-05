@@ -300,7 +300,10 @@
             } else {
               combinedtext += text[i];
             }
-          } else if (String(text[i]).match(/(.*?)\|(.*?)/g)) {
+          } else if (
+            String(text[i]).match(/(.*?)\|(.*?)/g) && 
+            (text[i-1] == "<br>" || text[i-1] == "\n" || tablestate > 0)
+          ) {
             // alert(text[i]);
             if (tablestate == 0) {
               if (
@@ -738,3 +741,4 @@
     </style>
   </body>
 </html>
+
