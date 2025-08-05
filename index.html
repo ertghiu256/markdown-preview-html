@@ -146,13 +146,13 @@
               if (text[i].match(/\!\[(.*?)\]/gi)) {
                 combinedtext +=
                   String(text[i].replace(/\((.*?)\)/g, "")).replace(
-                    /\[(.*?)\]/gi,
+                    /\!\[(.*?)\]/gi,
                     '<img src="' + link + '" alt="$1">'
                   ) + " ";
               } else if (!islink) {
                 combinedtext +=
                   String(text[i]).replace(
-                    /\[(.*?)/g,
+                    /\!\[(.*?)/g,
                     '<img src="' + link + '" alt="$1">'
                   ) + " ";
                 islink = true;
@@ -160,7 +160,7 @@
                 combinedtext += String(text[i]).replace(/(.*?)\]/g, "$1") + " ";
                 islink = false;
               } else {
-                combinedtext += String(text[i]).replace(/\*/g, "</a>") + " ";
+                combinedtext += String(text[i]).replace(/\]/g, "</a>") + " ";
                 islink = false;
               }
               text[i] = "";
@@ -246,7 +246,7 @@
                   String(text[i]).replace(/(.*?)\]/g, "$1</a>") + " ";
                 islink = false;
               } else {
-                combinedtext += String(text[i]).replace(/\*/g, "</a>") + " ";
+                combinedtext += String(text[i]).replace(/\]/g, "</a>") + " ";
                 islink = false;
               }
               text[i] = "";
@@ -729,6 +729,7 @@
     </style>
   </body>
 </html>
+
 
 
 
