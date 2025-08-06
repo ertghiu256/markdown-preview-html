@@ -125,17 +125,14 @@
           } else if (text[i].match(/\!\[(.*?)/g) && !isimglink) {
             // (text[i].match(/(.*?)\]/g) &&
             let link;
-            if (text[i].match(/\((.*?)\)/g)) {
-              link = text[i].match(/\((.*?)\)/g);
-            }
-            if (text[i + 1]) {
-              if (text[i + 1].match(/\((.*?)\)/g)) {
-                link = text[i + 1].match(/\((.*?)\)/g);
+            if (text[i + 5]) {
+              if (text[i + 5].match(/\((.*?)\)/g)) {
+                link = text[i + 5].match(/\((.*?)\)/g);
               }
             }
-            if (text[i + 2]) {
-              if (text[i + 2].match(/\((.*?)\)/g)) {
-                link = text[i + 2].match(/\((.*?)\)/g);
+            if (text[i + 4]) {
+              if (text[i + 4].match(/\((.*?)\)/g)) {
+                link = text[i + 4].match(/\((.*?)\)/g);
               }
             }
             if (text[i + 3]) {
@@ -143,10 +140,18 @@
                 link = text[i + 3].match(/\((.*?)\)/g);
               }
             }
-            if (text[i + 4]) {
-              if (text[i + 4].match(/\((.*?)\)/g)) {
-                link = text[i + 4].match(/\((.*?)\)/g);
+            if (text[i + 2]) {
+              if (text[i + 2].match(/\((.*?)\)/g)) {
+                link = text[i + 2].match(/\((.*?)\)/g);
               }
+            }
+            if (text[i + 1]) {
+              if (text[i + 1].match(/\((.*?)\)/g)) {
+                link = text[i + 1].match(/\((.*?)\)/g);
+              }
+            }
+            if (text[i].match(/\((.*?)\)/g)) {
+              link = text[i].match(/\((.*?)\)/g);
             }
             if (link) {
               link = String(link).replace(/\(/g, "").replace(/\)/g, "");
@@ -171,7 +176,7 @@
                 islink = false;
               }
               text[i] = "";
-              if (text[i + 1]) {
+              if (text[i + 1] && text[i + 1].includes(link)) {
                 if (
                   text[i + 1].match(/(.*?)\]/g) &&
                   !text[i + 1].match(/\[(.*?)/g)
@@ -181,7 +186,7 @@
                     .replace(/\((.*?)\)/g, "");
                 }
               }
-              if (text[i + 2]) {
+              if (text[i + 2] && text[i + 2].includes(link)) {
                 if (
                   text[i + 2].match(/(.*?)\]/g) &&
                   !text[i + 2].match(/\[(.*?)/g)
@@ -191,7 +196,7 @@
                     .replace(/\((.*?)\)/g, "");
                 }
               }
-              if (text[i + 3]) {
+              if (text[i + 3] && text[i + 3].includes(link)) {
                 if (
                   text[i + 3].match(/(.*?)\]/g) &&
                   !text[i + 3].match(/\[(.*?)/g)
@@ -201,12 +206,24 @@
                     .replace(/\((.*?)\)/g, "");
                 }
               }
-              if (text[i + 4]) {
+              if (text[i + 4] && text[i + 4].includes(link)) {
                 if (
                   text[i + 4].match(/(.*?)\]/g) &&
                   !text[i + 4].match(/\[(.*?)/g)
                 ) {
-                  text[i + 4] = text[i + 4].replace(/(.*?)\]/g, "$1");
+                  text[i + 4] = text[i + 4]
+                    .replace(/(.*?)\]/g, "$1")
+                    .replace(/\((.*?)\)/g, "");
+                }
+              }
+              if (text[i + 5] && text[i + 5].includes(link)) {
+                if (
+                  text[i + 5].match(/(.*?)\]/g) &&
+                  !text[i + 5].match(/\[(.*?)/g)
+                ) {
+                  text[i + 5] = text[i + 5]
+                    .replace(/(.*?)\]/g, "$1")
+                    .replace(/\((.*?)\)/g, "");
                 }
               }
             } else {
@@ -214,17 +231,14 @@
             }
           } else if (text[i].match(/\[(.*?)/g) || text[i].match(/(.*?)\]/g)) {
             let link;
-            if (text[i].match(/\((.*?)\)/g)) {
-              link = text[i].match(/\((.*?)\)/g);
-            }
-            if (text[i + 1]) {
-              if (text[i + 1].match(/\((.*?)\)(.*?)/g)) {
-                link = text[i + 1].match(/\((.*?)\)/g);
+            if (text[i + 5]) {
+              if (text[i + 5].match(/\((.*?)\)/g)) {
+                link = text[i + 5].match(/\((.*?)\)/g);
               }
             }
-            if (text[i + 2]) {
-              if (text[i + 2].match(/\((.*?)\)/g)) {
-                link = text[i + 2].match(/\((.*?)\)/g);
+            if (text[i + 4]) {
+              if (text[i + 4].match(/\((.*?)\)/g)) {
+                link = text[i + 4].match(/\((.*?)\)/g);
               }
             }
             if (text[i + 3]) {
@@ -232,10 +246,18 @@
                 link = text[i + 3].match(/\((.*?)\)/g);
               }
             }
-            if (text[i + 4]) {
-              if (text[i + 4].match(/\((.*?)\)/g)) {
-                link = text[i + 4].match(/\((.*?)\)/g);
+            if (text[i + 2]) {
+              if (text[i + 2].match(/\((.*?)\)/g)) {
+                link = text[i + 2].match(/\((.*?)\)/g);
               }
+            }
+            if (text[i + 1]) {
+              if (text[i + 1].match(/\((.*?)\)(.*?)/g)) {
+                link = text[i + 1].match(/\((.*?)\)/g);
+              }
+            }
+            if (text[i].match(/\((.*?)\)/g)) {
+              link = text[i].match(/\((.*?)\)/g);
             }
             if (link) {
               link = String(link).replace(/\(/g, "").replace(/\)/g, "");
@@ -261,7 +283,7 @@
                 islink = false;
               }
               text[i] = "";
-              if (text[i + 1]) {
+              if (text[i + 1] && text[i + 1].includes(link)) {
                 if (
                   text[i + 1].match(/(.*?)\]/g) &&
                   !text[i + 1].match(/\!\[(.*?)/g)
@@ -271,7 +293,7 @@
                     .replace(/\((.*?)\)/g, "");
                 }
               }
-              if (text[i + 2]) {
+              if (text[i + 2] && text[i + 2].includes(link)) {
                 if (
                   text[i + 2].match(/(.*?)\]/g) &&
                   !text[i + 2].match(/\!\[(.*?)/g)
@@ -281,7 +303,7 @@
                     .replace(/\((.*?)\)/g, "");
                 }
               }
-              if (text[i + 3]) {
+              if (text[i + 3] && text[i + 3].includes(link)) {
                 if (
                   text[i + 3].match(/(.*?)\]/g) &&
                   !text[i + 3].match(/\!\[(.*?)/g)
@@ -291,12 +313,24 @@
                     .replace(/\((.*?)\)/g, "");
                 }
               }
-              if (text[i + 4]) {
+              if (text[i + 4] && text[i + 4].includes(link)) {
                 if (
                   text[i + 4].match(/(.*?)\]/g) &&
                   !text[i + 4].match(/\!\[(.*?)/g)
                 ) {
-                  text[i + 4] = text[i + 4].replace(/(.*?)\]/g, "$1");
+                  text[i + 4] = text[i + 4]
+                    .replace(/(.*?)\]/g, "$1")
+                    .replace(/\((.*?)\)/g, "");
+                }
+              }
+              if (text[i + 5] && text[i + 5].includes(link)) {
+                if (
+                  text[i + 5].match(/(.*?)\]/g) &&
+                  !text[i + 5].match(/\!\[(.*?)/g)
+                ) {
+                  text[i + 5] = text[i + 5]
+                    .replace(/(.*?)\]/g, "$1")
+                    .replace(/\((.*?)\)/g, "");
                 }
               }
             } else {
@@ -424,12 +458,15 @@
             if (text[i].match(/\*\*/g)) {
               if (text[i].match(/\*\*(.*?)\*\*/gi)) {
                 text[i] =
-                  String(text[i]).replaceAll(/\*\*(.*?)\*\*/gi, "<b>$1</b>") + " ";
+                  String(text[i]).replaceAll(/\*\*(.*?)\*\*/gi, "<b>$1</b>") +
+                  " ";
               } else if (!isbold) {
-                text[i] = String(text[i]).replaceAll(/\*\*(.*?)/g, "<b>$1") + " ";
+                text[i] =
+                  String(text[i]).replaceAll(/\*\*(.*?)/g, "<b>$1") + " ";
                 isbold = true;
               } else if (text[i].match(/(.*?)\*\*/gi)) {
-                text[i] = String(text[i]).replaceAll(/(.*?)\*\*/g, "$1</b>") + " ";
+                text[i] =
+                  String(text[i]).replaceAll(/(.*?)\*\*/g, "$1</b>") + " ";
                 isbold = false;
               } else {
                 text[i] = String(text[i]).replaceAll(/\*\*/g, "</b>") + " ";
@@ -438,12 +475,15 @@
             } else if (text[i].match(/\_\_/g) && !text[i].match(/\_\_\_/g)) {
               if (text[i].match(/\_\_(.*?)\_\_/gi)) {
                 text[i] =
-                  String(text[i]).replaceAll(/\_\_(.*?)\_\_/gi, "<b>$1</b>") + " ";
+                  String(text[i]).replaceAll(/\_\_(.*?)\_\_/gi, "<b>$1</b>") +
+                  " ";
               } else if (!isbold) {
-                text[i] = String(text[i]).replaceAll(/\_\_(.*?)/g, "<b>$1") + " ";
+                text[i] =
+                  String(text[i]).replaceAll(/\_\_(.*?)/g, "<b>$1") + " ";
                 isbold = true;
               } else if (text[i].match(/(.*?)\_\_/gi)) {
-                text[i] = String(text[i]).replaceAll(/(.*?)\_\_/g, "$1</b>") + " ";
+                text[i] =
+                  String(text[i]).replaceAll(/(.*?)\_\_/g, "$1</b>") + " ";
                 isbold = false;
               } else {
                 text[i] = String(text[i]).replaceAll(/\_\_/g, "</b>") + " ";
@@ -501,7 +541,8 @@
                 text[i] = String(text[i]).replaceAll(/\*(.*?)/g, "<i>$1") + " ";
                 isitalic = true;
               } else if (text[i].match(/(.*?)\*/gi)) {
-                text[i] = String(text[i]).replaceAll(/(.*?)\*/g, "$1</i>") + " ";
+                text[i] =
+                  String(text[i]).replaceAll(/(.*?)\*/g, "$1</i>") + " ";
                 isitalic = false;
               } else {
                 text[i] = String(text[i]).replaceAll(/\*/g, "</i>") + " ";
@@ -515,7 +556,8 @@
                 text[i] = String(text[i]).replaceAll(/\_(.*?)/g, "<i>$1") + " ";
                 isitalic = true;
               } else if (text[i].match(/(.*?)\_/gi)) {
-                text[i] = String(text[i]).replaceAll(/(.*?)\_/g, "$1</i>") + " ";
+                text[i] =
+                  String(text[i]).replaceAll(/(.*?)\_/g, "$1</i>") + " ";
                 isitalic = false;
               } else {
                 text[i] = String(text[i]).replaceAll(/\_/g, "</i>") + " ";
@@ -543,12 +585,15 @@
             } else if (text[i].match(/\~(.*?)/g)) {
               if (text[i].match(/\~(.*?)\~/gi)) {
                 text[i] =
-                  String(text[i]).replaceAll(/\~(.*?)\~/gi, "<sub>$1</sub>") + " ";
+                  String(text[i]).replaceAll(/\~(.*?)\~/gi, "<sub>$1</sub>") +
+                  " ";
               } else if (!issub) {
-                text[i] = String(text[i]).replaceAll(/\~(.*?)/g, "<sub>$1") + " ";
+                text[i] =
+                  String(text[i]).replaceAll(/\~(.*?)/g, "<sub>$1") + " ";
                 issub = true;
               } else if (text[i].match(/(.*?)\~/gi)) {
-                text[i] = String(text[i]).replaceAll(/(.*?)\~/g, "$1</sub>") + " ";
+                text[i] =
+                  String(text[i]).replaceAll(/(.*?)\~/g, "$1</sub>") + " ";
                 issub = false;
               } else {
                 text[i] = String(text[i]).replaceAll(/\~/g, "</sub>") + " ";
@@ -559,12 +604,15 @@
             if (text[i].match(/\^(.*?)/g)) {
               if (text[i].match(/\^(.*?)\^/gi)) {
                 text[i] =
-                  String(text[i]).replaceAll(/\^(.*?)\^/gi, "<sup>$1</sup>") + " ";
+                  String(text[i]).replaceAll(/\^(.*?)\^/gi, "<sup>$1</sup>") +
+                  " ";
               } else if (!issup) {
-                text[i] = String(text[i]).replaceAll(/\^(.*?)/g, "<sup>$1") + " ";
+                text[i] =
+                  String(text[i]).replaceAll(/\^(.*?)/g, "<sup>$1") + " ";
                 issup = true;
               } else if (text[i].match(/(.*?)\^/gi)) {
-                text[i] = String(text[i]).replaceAll(/(.*?)\^/g, "$1</sup>") + " ";
+                text[i] =
+                  String(text[i]).replaceAll(/(.*?)\^/g, "$1</sup>") + " ";
                 issup = false;
               } else {
                 text[i] = String(text[i]).replaceAll(/\*\*/g, "</sup>") + " ";
@@ -703,9 +751,9 @@
         scroll-behavior: smooth;
         background: #000000 /*#edfaff*/;
         background: linear-gradient(
-          57deg, 
-          rgba(237, 250, 255, 1) 0%, 
-          rgba(255, 240, 240, 1) 50%, 
+          57deg,
+          rgba(237, 250, 255, 1) 0%,
+          rgba(255, 240, 240, 1) 50%,
           rgba(255, 244, 230, 1) 100%
         );
       }
@@ -800,7 +848,3 @@
     </style>
   </body>
 </html>
-
-
-
-
