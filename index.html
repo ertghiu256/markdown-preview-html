@@ -125,33 +125,18 @@
           } else if (text[i].match(/\!\[(.*?)/g) && !isimglink) {
             // (text[i].match(/(.*?)\]/g) &&
             let link;
-            if (text[i + 5]) {
-              if (text[i + 5].match(/\((.*?)\)/g)) {
-                link = text[i + 5].match(/\((.*?)\)/g);
-              }
-            }
-            if (text[i + 4]) {
-              if (text[i + 4].match(/\((.*?)\)/g)) {
-                link = text[i + 4].match(/\((.*?)\)/g);
-              }
-            }
-            if (text[i + 3]) {
-              if (text[i + 3].match(/\((.*?)\)/g)) {
-                link = text[i + 3].match(/\((.*?)\)/g);
-              }
-            }
-            if (text[i + 2]) {
-              if (text[i + 2].match(/\((.*?)\)/g)) {
-                link = text[i + 2].match(/\((.*?)\)/g);
-              }
-            }
-            if (text[i + 1]) {
-              if (text[i + 1].match(/\((.*?)\)/g)) {
-                link = text[i + 1].match(/\((.*?)\)/g);
-              }
-            }
             if (text[i].match(/\((.*?)\)/g)) {
               link = text[i].match(/\((.*?)\)/g);
+            } else if (text[i + 1] && text[i + 1].match(/\((.*?)\)/g)) {
+              link = text[i + 1].match(/\((.*?)\)/g);
+            } else if (text[i + 2] && text[i + 2].match(/\((.*?)\)/g)) {
+              link = text[i + 2].match(/\((.*?)\)/g);
+            } else if (text[i + 3] && text[i + 3].match(/\((.*?)\)/g)) {
+              link = text[i + 3].match(/\((.*?)\)/g);
+            } else if (text[i + 4] && text[i + 4].match(/\((.*?)\)/g)) {
+              link = text[i + 4].match(/\((.*?)\)/g);
+            } else if (text[i + 5] && text[i + 5].match(/\((.*?)\)/g)) {
+              link = text[i + 5].match(/\((.*?)\)/g);
             }
             if (link) {
               link = String(link).replace(/\(/g, "").replace(/\)/g, "");
@@ -176,88 +161,70 @@
                 islink = false;
               }
               text[i] = "";
-              if (text[i + 1] && text[i + 1].includes(link)) {
-                if (
-                  text[i + 1].match(/(.*?)\]/g) &&
-                  !text[i + 1].match(/\[(.*?)/g)
-                ) {
-                  text[i + 1] = text[i + 1]
-                    .replace(/(.*?)\]/g, "$1")
-                    .replace(/\((.*?)\)/g, "");
-                }
+              if (
+                text[i + 1] && 
+                text[i + 1].includes(link) && 
+                text[i + 1].match(/(.*?)\]/g) &&
+                !text[i + 1].match(/\[(.*?)/g)
+              ) {
+                text[i + 1] = text[i + 1]
+                  .replace(/(.*?)\]/g, "$1")
+                  .replace(/\((.*?)\)/g, "");
+              } else if (
+                text[i + 2] && 
+                text[i + 2].includes(link) &&
+                text[i + 2].match(/(.*?)\]/g) &&
+                !text[i + 2].match(/\[(.*?)/g)
+              ) {
+                text[i + 2] = text[i + 2]
+                  .replace(/(.*?)\]/g, "$1")
+                  .replace(/\((.*?)\)/g, "");
+              } else if (
+                text[i + 3] && 
+                text[i + 3].includes(link) && 
+                text[i + 3].match(/(.*?)\]/g) &&
+                !text[i + 3].match(/\[(.*?)/g)
+              ) {
+                text[i + 3] = text[i + 3]
+                  .replace(/(.*?)\]/g, "$1")
+                  .replace(/\((.*?)\)/g, "");
+              } else if (
+                text[i + 4] && 
+                text[i + 4].includes(link) &&
+                text[i + 4].match(/(.*?)\]/g) &&
+                !text[i + 4].match(/\[(.*?)/g)
+              ) {
+                text[i + 4] = text[i + 4]
+                  .replace(/(.*?)\]/g, "$1")
+                  .replace(/\((.*?)\)/g, "");
               }
-              if (text[i + 2] && text[i + 2].includes(link)) {
-                if (
-                  text[i + 2].match(/(.*?)\]/g) &&
-                  !text[i + 2].match(/\[(.*?)/g)
-                ) {
-                  text[i + 2] = text[i + 2]
-                    .replace(/(.*?)\]/g, "$1")
-                    .replace(/\((.*?)\)/g, "");
-                }
-              }
-              if (text[i + 3] && text[i + 3].includes(link)) {
-                if (
-                  text[i + 3].match(/(.*?)\]/g) &&
-                  !text[i + 3].match(/\[(.*?)/g)
-                ) {
-                  text[i + 3] = text[i + 3]
-                    .replace(/(.*?)\]/g, "$1")
-                    .replace(/\((.*?)\)/g, "");
-                }
-              }
-              if (text[i + 4] && text[i + 4].includes(link)) {
-                if (
-                  text[i + 4].match(/(.*?)\]/g) &&
-                  !text[i + 4].match(/\[(.*?)/g)
-                ) {
-                  text[i + 4] = text[i + 4]
-                    .replace(/(.*?)\]/g, "$1")
-                    .replace(/\((.*?)\)/g, "");
-                }
-              }
-              if (text[i + 5] && text[i + 5].includes(link)) {
-                if (
-                  text[i + 5].match(/(.*?)\]/g) &&
-                  !text[i + 5].match(/\[(.*?)/g)
-                ) {
-                  text[i + 5] = text[i + 5]
-                    .replace(/(.*?)\]/g, "$1")
-                    .replace(/\((.*?)\)/g, "");
-                }
+              if (
+                text[i + 5] && 
+                text[i + 5].includes(link) &&
+                text[i + 5].match(/(.*?)\]/g) &&
+                !text[i + 5].match(/\[(.*?)/g)
+              ) {
+                text[i + 5] = text[i + 5]
+                  .replace(/(.*?)\]/g, "$1")
+                  .replace(/\((.*?)\)/g, "");
               }
             } else {
               combinedtext += text[i];
             }
           } else if (text[i].match(/\[(.*?)/g) || text[i].match(/(.*?)\]/g)) {
             let link;
-            if (text[i + 5]) {
-              if (text[i + 5].match(/\((.*?)\)/g)) {
-                link = text[i + 5].match(/\((.*?)\)/g);
-              }
-            }
-            if (text[i + 4]) {
-              if (text[i + 4].match(/\((.*?)\)/g)) {
-                link = text[i + 4].match(/\((.*?)\)/g);
-              }
-            }
-            if (text[i + 3]) {
-              if (text[i + 3].match(/\((.*?)\)/g)) {
-                link = text[i + 3].match(/\((.*?)\)/g);
-              }
-            }
-            if (text[i + 2]) {
-              if (text[i + 2].match(/\((.*?)\)/g)) {
-                link = text[i + 2].match(/\((.*?)\)/g);
-              }
-            }
-            if (text[i + 1]) {
-              if (text[i + 1].match(/\((.*?)\)(.*?)/g)) {
-                link = text[i + 1].match(/\((.*?)\)/g);
-              }
-            }
             if (text[i].match(/\((.*?)\)/g)) {
               link = text[i].match(/\((.*?)\)/g);
+            } else if (text[i + 1] && text[i + 1].match(/\((.*?)\)/g)) {
+              link = text[i + 1].match(/\((.*?)\)/g);
+            } else if (text[i + 2] && text[i + 2].match(/\((.*?)\)/g)) {
+              link = text[i + 2].match(/\((.*?)\)/g);
+            } else if (text[i + 3] && text[i + 3].match(/\((.*?)\)/g)) {
+              link = text[i + 3].match(/\((.*?)\)/g);
+            } else if (text[i + 4] && text[i + 4].match(/\((.*?)\)/g)) {
+              link = text[i + 4].match(/\((.*?)\)/g);
+            } else if (text[i + 5] && text[i + 5].match(/\((.*?)\)/g)) {
+              link = text[i + 5].match(/\((.*?)\)/g);
             }
             if (link) {
               link = String(link).replace(/\(/g, "").replace(/\)/g, "");
@@ -283,55 +250,52 @@
                 islink = false;
               }
               text[i] = "";
-              if (text[i + 1] && text[i + 1].includes(link)) {
-                if (
-                  text[i + 1].match(/(.*?)\]/g) &&
-                  !text[i + 1].match(/\!\[(.*?)/g)
-                ) {
-                  text[i + 1] = text[i + 1]
-                    .replace(/(.*?)\]/g, "$1")
-                    .replace(/\((.*?)\)/g, "");
-                }
+              if (
+                text[i + 1] && 
+                text[i + 1].includes(link) && 
+                text[i + 1].match(/(.*?)\]/g) &&
+                !text[i + 1].match(/\[(.*?)/g)
+              ) {
+                text[i + 1] = text[i + 1]
+                  .replace(/(.*?)\]/g, "$1")
+                  .replace(/\((.*?)\)/g, "");
+              } else if (
+                text[i + 2] && 
+                text[i + 2].includes(link) &&
+                text[i + 2].match(/(.*?)\]/g) &&
+                !text[i + 2].match(/\[(.*?)/g)
+              ) {
+                text[i + 2] = text[i + 2]
+                  .replace(/(.*?)\]/g, "$1")
+                  .replace(/\((.*?)\)/g, "");
+              } else if (
+                text[i + 3] && 
+                text[i + 3].includes(link) && 
+                text[i + 3].match(/(.*?)\]/g) &&
+                !text[i + 3].match(/\[(.*?)/g)
+              ) {
+                text[i + 3] = text[i + 3]
+                  .replace(/(.*?)\]/g, "$1")
+                  .replace(/\((.*?)\)/g, "");
+              } else if (
+                text[i + 4] && 
+                text[i + 4].includes(link) &&
+                text[i + 4].match(/(.*?)\]/g) &&
+                !text[i + 4].match(/\[(.*?)/g)
+              ) {
+                text[i + 4] = text[i + 4]
+                  .replace(/(.*?)\]/g, "$1")
+                  .replace(/\((.*?)\)/g, "");
               }
-              if (text[i + 2] && text[i + 2].includes(link)) {
-                if (
-                  text[i + 2].match(/(.*?)\]/g) &&
-                  !text[i + 2].match(/\!\[(.*?)/g)
-                ) {
-                  text[i + 2] = text[i + 2]
-                    .replace(/(.*?)\]/g, "$1")
-                    .replace(/\((.*?)\)/g, "");
-                }
-              }
-              if (text[i + 3] && text[i + 3].includes(link)) {
-                if (
-                  text[i + 3].match(/(.*?)\]/g) &&
-                  !text[i + 3].match(/\!\[(.*?)/g)
-                ) {
-                  text[i + 3] = text[i + 3]
-                    .replace(/(.*?)\]/g, "$1")
-                    .replace(/\((.*?)\)/g, "");
-                }
-              }
-              if (text[i + 4] && text[i + 4].includes(link)) {
-                if (
-                  text[i + 4].match(/(.*?)\]/g) &&
-                  !text[i + 4].match(/\!\[(.*?)/g)
-                ) {
-                  text[i + 4] = text[i + 4]
-                    .replace(/(.*?)\]/g, "$1")
-                    .replace(/\((.*?)\)/g, "");
-                }
-              }
-              if (text[i + 5] && text[i + 5].includes(link)) {
-                if (
-                  text[i + 5].match(/(.*?)\]/g) &&
-                  !text[i + 5].match(/\!\[(.*?)/g)
-                ) {
-                  text[i + 5] = text[i + 5]
-                    .replace(/(.*?)\]/g, "$1")
-                    .replace(/\((.*?)\)/g, "");
-                }
+              if (
+                text[i + 5] && 
+                text[i + 5].includes(link) &&
+                text[i + 5].match(/(.*?)\]/g) &&
+                !text[i + 5].match(/\[(.*?)/g)
+              ) {
+                text[i + 5] = text[i + 5]
+                  .replace(/(.*?)\]/g, "$1")
+                  .replace(/\((.*?)\)/g, "");
               }
             } else {
               combinedtext += text[i];
@@ -340,23 +304,24 @@
             String(text[i]).match(/(.*?)\|(.*?)/g) &&
             (text[i - 1] == "<br>" || text[i - 1] == "\n" || tablestate > 0)
           ) {
-            // alert(text[i]);
+            text[i] = text[i].replaceAll(/(.*?)\-(.*?)/g,"")
             if (tablestate == 0) {
               if (
                 text.join(" ").match(/\-\-\-(.*?)/g) ||
                 text.join(" ").match(/(.*?)\|\-\-\-\|(.*?)/g)
               ) {
-                combinedtext += "<table><thead><tr><th>";
+                combinedtext += text[i].replace(/(.*?)\|(.*?)/g, "$1<table><thead><tr><th>$2");
                 tablestate = 1;
               } else {
                 combinedtext += text[i] + " ";
               }
             } else if (tablestate == 1) {
               if (text[i + 1] == "<br>") {
-                combinedtext += "</th></tr></thead><tbody>";
+                
+                combinedtext += text[i].replace(/(.*?)\|(.*?)/g, "$1</th></tr></thead><tbody>$2");
                 tablestate = 2;
               } else {
-                combinedtext += "</th><th>";
+                combinedtext += text[i].replace(/(.*?)\|(.*?)/g, "$1</th><th>$2");
               }
             } else if (
               tablestate == 2 &&
@@ -366,21 +331,23 @@
               )
             ) {
               if (text[i + 1] == "<br>" || !text[i + 1]) {
-                combinedtext += "</td></tr>";
+                combinedtext += text[i].replace(/(.*?)\|(.*?)/g, "$1</td></tr>$2");
               } else {
-                combinedtext += "</td><th>";
+                combinedtext += text[i].replace(/(.*?)\|(.*?)/g, "$1</td><th>$2");
               }
             }
             if (
-              text[i].match(/\-\-\-(.*?)/g) ||
-              text[i].match(/(.*?)\|\-\-\-\|(.*?)/g)
+              text[i].match(/\-\-\-(.*?)/gim) ||
+              text[i].match(/(.*?)\|\-\-\-\|(.*?)/gim) ||
+              text[i].match(/(.*?)\-\-\-(.*?)/gim) 
             ) {
               text[i] = "";
             }
             if (text[i + 1]) {
               if (
-                text[i + 1].match(/\-\-\-(.*?)/g) ||
-                text[i + 1].match(/(.*?)\|\-\-\-\|(.*?)/g)
+                text[i + 1].match(/\-\-\-(.*?)/gim) ||
+                text[i + 1].match(/(.*?)\|\-\-\-\|(.*?)/gim) ||
+                text[i + 1].match(/(.*?)\-\-\-(.*?)/gim)
               ) {
                 text[i + 1] = "";
               }
@@ -848,3 +815,4 @@
     </style>
   </body>
 </html>
+
