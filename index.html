@@ -86,7 +86,7 @@
             } else {
               combinedtext +=
                 String(text[i])
-                  .replace(/\```/g, "</pre></code>")
+                  .replace(/\`\`\`/g, "</pre></code>")
                   .replace('"', "&quot;") + " ";
               iscode = false;
             }
@@ -396,8 +396,8 @@
               }
             }
             if (
-              ((text[i].match(/\-/gim) && !text[i].match(/\-\-\-/g)) ||
-                (text[i].match(/\*/gim) && !text[i].match(/\*\*/g))) &&
+              ((text[i].match(/\-/gi) && !text[i].match(/\-\-\-/g)) ||
+                (text[i].match(/\*/gi) && !text[i].match(/\*\*/g))) &&
               (text[i - 1] == "<br>" || text[i - 1] == "\n")
             ) {
               if (!islist) {
@@ -712,6 +712,9 @@
         padding: 0.5%;
         padding-left: 2%;
       }
+      img {
+        max-width: 100%;
+      }
       .bar {
         width: 100%;
         height: 0.1em;
@@ -734,3 +737,4 @@
     </style>
   </body>
 </html>
+
