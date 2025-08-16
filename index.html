@@ -7,7 +7,7 @@
     <h1 id="Main_heading">HTML Markdown displayer</h1>
     <textarea
       id="inputarea"
-      onchange="document.getElementById('displaybox').innerHTML = converttexttomarkdown(this.value);"
+      onblur="document.getElementById('displaybox').innerHTML = converttexttomarkdown(this.value);"
       placeholder="Enter/Paste Markdown"
     ></textarea>
 
@@ -33,7 +33,9 @@
         isblockquote = false,
         issup = false,
         issub = false,
-        tablestate = 0;
+        tablestate = 0,
+        blockquotetimes = 0,
+        orderedliststate = 0;
       function converttexttomarkdown(text, save = true) {
         combinedtext = "";
         ish6 = false;
@@ -54,13 +56,18 @@
         issup = false;
         issub = false;
         tablestate = 0;
-        text = String(text);
+        text = String(text),
+        blockquotetimes = 0, 
+        orderedliststate = 0;
         if (save == true) {
           localStorage.setItem("MarkdownSave", text);
         }
         text = text
+          .replaceAll(/\<script\>(.*?)\<\/script\>/gim, " ")
+          .replaceAll(/\<(.*?)script(.*?)\>(.*?)\<(.*?)\/(.*?)script(.*?)\>/gm, " ")
           .replaceAll(/  /g, " &nbsp ")
-          .replaceAll(/<br>/gim, " <br> ")
+          .replaceAll(/\<br\>/gim, " <br> ")
+          .replaceAll(/\\n/gim, " <br> ")
           .replaceAll(/\n/gim, " <br> ");
         text = text.split(" ");
         console.log(text);
@@ -86,7 +93,7 @@
             } else {
               combinedtext +=
                 String(text[i])
-                  .replace(/\`\`\`/g, "</pre></code>")
+                  .replace(/\```/g, "</pre></code>")
                   .replace('"', "&quot;") + " ";
               iscode = false;
             }
@@ -274,13 +281,19 @@
             // }
           } else {
             if (
-              text[i][0] == ">" &&
+              (text[i] == ">" ||
               text[i].match(/\>(.*?)/g) &&
-              (text[i - 1] == "<br>" || text[i - 1] == "\n" || i == 0) &&
-              !isblockquote
+              !text[i].match(/(.*?)\>(.*?)/g)) &&
+              (text[i - 1] == "<br>" || text[i - 1] == "\n" || text[i - 1] == "<blockquote>" || i == 0) 
+              // && !isblockquote
             ) {
-              text[i] = "<blockquote>";
+              if (!isblockquote){
+                text[i] = text[i].replaceAll(/\>(.*?)/gim,"<blockquote>");
+              } else {
+                text[i] = text[i].replaceAll(/\>/g,"<blockquote>");
+              }
               isblockquote = true;
+              blockquotetimes += text[i].match(/\>(.*?)/g).length;
             }
             if (text[i] == "######") {
               if (!ish6) {
@@ -335,9 +348,23 @@
               (text[i].match(/\-\-\-/g) ||
                 text[i].match(/\_\_\_/g) ||
                 text[i].match(/\*\*\*/g)) &&
-              (text[i - 1] == "<br>" || text[i - 1] == "\n")
+              (text[i - 1] == "<br>" || text[i - 1] == "\n" || i == 0)
             ) {
               text[i] = '<div class="bar"></div>';
+            }
+            if (
+              (
+                text[i].match(/[0-9]\.(.*?)/gim)
+              ) &&
+              (text[i - 1] == "<br>" || text[i - 1] == "\n" || i == 0) 
+              // && !isblockquote
+            ) {
+              if (orderedliststate == 0){
+                text[i] = text[i].replaceAll(/1\.(.*?)|2\.(.*?)|3\.(.*?)|4\.(.*?)|5\.(.*?)|6\.(.*?)|7\.(.*?)|8\.(.*?)|9\.(.*?)|0\.(.*?)/gim,"<ol>    <li>");
+              } else {
+                text[i] = text[i].replaceAll(/1\.(.*?)|2\.(.*?)|3\.(.*?)|4\.(.*?)|5\.(.*?)|6\.(.*?)|7\.(.*?)|8\.(.*?)|9\.(.*?)|0\.(.*?)/gim," <li>");
+              }
+              orderedliststate += 1;
             }
             if (text[i].match(/\*\*/g)) {
               if (text[i].match(/\*\*(.*?)\*\*/gi)) {
@@ -575,7 +602,7 @@
                 combinedtext += "</td></tr></tbody></table>";
               }
               if (isblockquote) {
-                combinedtext += "</blockquote>";
+                combinedtext += "</blockquote>".repeat(blockquotetimes);
                 isblockquote = false;
               }
               if (issub) {
@@ -586,6 +613,13 @@
                 combinedtext += "</sup>";
                 issup = false;
               }
+              if (orderedliststate > 0) {
+                combinedtext += "</li>";
+                if (!"1234567890".includes(text[i + 1].at(0))){
+                  combinedtext += "\n</ol>";
+                  orderedliststate = 0;
+                }
+              }
               if (
                 !(
                   ish1 ||
@@ -594,7 +628,8 @@
                   ish4 ||
                   ish5 ||
                   ish6 ||
-                  tablestate != 0
+                  tablestate != 0 || 
+                  orderedliststate != 0
                 )
               ) {
                 combinedtext += "<br>";
@@ -737,4 +772,3 @@
     </style>
   </body>
 </html>
-
