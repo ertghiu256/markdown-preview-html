@@ -56,15 +56,16 @@
         issup = false;
         issub = false;
         tablestate = 0;
-        text = String(text),
-        blockquotetimes = 0, 
-        orderedliststate = 0;
+        (text = String(text)), (blockquotetimes = 0), (orderedliststate = 0);
         if (save == true) {
           localStorage.setItem("MarkdownSave", text);
         }
         text = text
           .replaceAll(/\<script\>(.*?)\<\/script\>/gim, " ")
-          .replaceAll(/\<(.*?)script(.*?)\>(.*?)\<(.*?)\/(.*?)script(.*?)\>/gm, " ")
+          .replaceAll(
+            /\<(.*?)script(.*?)\>(.*?)\<(.*?)\/(.*?)script(.*?)\>/gm,
+            " "
+          )
           .replaceAll(/  /g, " &nbsp ")
           .replaceAll(/\<br\>/gim, " <br> ")
           .replaceAll(/\\n/gim, " <br> ")
@@ -211,14 +212,14 @@
               combinedtext += text[i];
             }
           } else if (
-            (
-              String(text[i]).match(/(.*?)\|(.*?)/g) &&
-              (text[i - 1] == "<br>" || text[i - 1] == "\n" || tablestate > 0)
-            ) || 
-            (
-              (text[i] == "|" && text[i + 1] && text[i + 1].match(/\-\-\-(.*?)/g)) ||
-              text[i].match(/(.*?)\|\-\-\-\|(.*?)/g)
-            )
+            (String(text[i]).match(/(.*?)\|(.*?)/g) &&
+              (text[i - 1] == "<br>" ||
+                text[i - 1] == "\n" ||
+                tablestate > 0)) ||
+            (text[i] == "|" &&
+              text[i + 1] &&
+              text[i + 1].match(/\-\-\-(.*?)/g)) ||
+            text[i].match(/(.*?)\|\-\-\-\|(.*?)/g)
           ) {
             text[i] = text[i].replaceAll(/(.*?)\-(.*?)/g, "");
             if (tablestate == 0) {
@@ -285,15 +286,18 @@
           } else {
             if (
               (text[i] == ">" ||
-              text[i].match(/\>(.*?)/g) &&
-              !text[i].match(/(.*?)\>(.*?)/g)) &&
-              (text[i - 1] == "<br>" || text[i - 1] == "\n" || text[i - 1] == "<blockquote>" || i == 0) 
+                (text[i].match(/\>(.*?)/g) &&
+                  !text[i].match(/(.*?)\>(.*?)/g))) &&
+              (text[i - 1] == "<br>" ||
+                text[i - 1] == "\n" ||
+                text[i - 1] == "<blockquote>" ||
+                i == 0)
               // && !isblockquote
             ) {
-              if (!isblockquote){
-                text[i] = text[i].replaceAll(/\>(.*?)/gim,"<blockquote>");
+              if (!isblockquote) {
+                text[i] = text[i].replaceAll(/\>(.*?)/gim, "<blockquote>");
               } else {
-                text[i] = text[i].replaceAll(/\>/g,"<blockquote>");
+                text[i] = text[i].replaceAll(/\>/g, "<blockquote>");
               }
               isblockquote = true;
               blockquotetimes += text[i].match(/\>(.*?)/g).length;
@@ -356,16 +360,20 @@
               text[i] = '<div class="bar"></div>';
             }
             if (
-              (
-                text[i].match(/[0-9]\.(.*?)/gim)
-              ) &&
-              (text[i - 1] == "<br>" || text[i - 1] == "\n" || i == 0) 
+              text[i].match(/[0-9]\.(.*?)/gim) &&
+              (text[i - 1] == "<br>" || text[i - 1] == "\n" || i == 0)
               // && !isblockquote
             ) {
-              if (orderedliststate == 0){
-                text[i] = text[i].replaceAll(/1\.(.*?)|2\.(.*?)|3\.(.*?)|4\.(.*?)|5\.(.*?)|6\.(.*?)|7\.(.*?)|8\.(.*?)|9\.(.*?)|0\.(.*?)/gim,"<ol>    <li>");
+              if (orderedliststate == 0) {
+                text[i] = text[i].replaceAll(
+                  /1\.(.*?)|2\.(.*?)|3\.(.*?)|4\.(.*?)|5\.(.*?)|6\.(.*?)|7\.(.*?)|8\.(.*?)|9\.(.*?)|0\.(.*?)/gim,
+                  "<ol>    <li>"
+                );
               } else {
-                text[i] = text[i].replaceAll(/1\.(.*?)|2\.(.*?)|3\.(.*?)|4\.(.*?)|5\.(.*?)|6\.(.*?)|7\.(.*?)|8\.(.*?)|9\.(.*?)|0\.(.*?)/gim," <li>");
+                text[i] = text[i].replaceAll(
+                  /1\.(.*?)|2\.(.*?)|3\.(.*?)|4\.(.*?)|5\.(.*?)|6\.(.*?)|7\.(.*?)|8\.(.*?)|9\.(.*?)|0\.(.*?)/gim,
+                  " <li>"
+                );
               }
               orderedliststate += 1;
             }
@@ -588,7 +596,7 @@
               }
               if (isimglink) {
                 // combinedtext += "</a>"
-                islink = false;
+                isimglink = false;
               }
               if (
                 islist &&
@@ -600,7 +608,6 @@
                 )
               ) {
                 combinedtext += "</ul></li>";
-                text[i] = ""
                 islist = false;
                 ignorebreak = true;
               }
@@ -623,7 +630,14 @@
               }
               if (orderedliststate > 0) {
                 combinedtext += "</li>";
-                if (!(text[i + 1] && "1234567890".includes(text[i + 1].at(0)) && text[i + 2] && text[i + 2] != ".")){
+                if (
+                  !(
+                    text[i + 1] &&
+                    "1234567890".includes(text[i + 1].at(0)) &&
+                    text[i + 2] &&
+                    text[i + 2] != "."
+                  )
+                ) {
                   combinedtext += "</ol>";
                   orderedliststate = 0;
                   ignorebreak = true;
@@ -637,17 +651,15 @@
                   ish4 ||
                   ish5 ||
                   ish6 ||
-                  islist ||
-                  tablestate != 0 || 
+                  tablestate != 0 ||
                   orderedliststate != 0 ||
-                  text[i + 1] == ">" ||
-                  text[i + 1].includes("#") ||
+                  text[i - 1] == "```" ||
                   ignorebreak
                 )
               ) {
                 combinedtext += "<br>";
-              } else if (ignorebreak == true){
-                text[i] = "<br>"
+              } else if (ignorebreak == true) {
+                text[i] = "<br>";
               }
               ish1 = false;
               ish2 = false;
@@ -712,9 +724,11 @@
       }
       #inputarea:hover {
         transform: translate(-50%, 0) scale(1.02);
+        background-color: rgba(255, 255, 240, 0.4);
       }
       #inputarea:active {
         transform: translate(-50%, 0) scale(1.05);
+        background-color: rgba(255, 255, 240, 0.4);
       }
       #displaybox {
         position: relative;
