@@ -709,7 +709,7 @@
       }
       #inputarea {
         width: 80vw;
-        min-height: 10vh;
+        min-height: 8vh;
         resize: vertical;
         position: relative;
         transition: ease 0.5s;
@@ -725,10 +725,13 @@
       #inputarea:hover {
         transform: translate(-50%, 0) scale(1.02);
         background-color: rgba(255, 255, 240, 0.4);
+        min-height: 10vh;
       }
-      #inputarea:active {
-        transform: translate(-50%, 0) scale(1.05);
-        background-color: rgba(235, 235, 217, 0.4);
+      #inputarea:focus {
+        transform: translate(-50%, 0) scale(1.04);
+        background-color: rgba(250, 246, 212, 0.3);
+        box-shadow: 0px 0px 15px rgba(255, 246, 204, 0.6);
+        min-height: 19vh;
       }
       #displaybox {
         position: relative;
@@ -740,7 +743,7 @@
         border-radius: 2em;
         padding: 5vw;
         margin: 3% 0%;
-        box-shadow: 0px 0px 10px rgba(84, 84, 84, 0.5);
+        box-shadow: 0px 0px 10px rgba(84, 84, 84, 0.25);
         background-color: rgba(255, 255, 255, 0.85);
         transition: ease 0.35s;
         animation: anin 1s 1;
@@ -799,4 +802,3 @@
     </style>
   </body>
 </html>
-
